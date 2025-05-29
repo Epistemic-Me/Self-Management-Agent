@@ -68,10 +68,10 @@ export default function ChatPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-border">
-        <h1 className="text-xl font-semibold">Chat</h1>
+      <div className="p-4 border-b border-border bg-gradient-to-r from-card to-epistemic-surface">
+        <h1 className="text-xl font-semibold text-foreground">Chat Interface</h1>
         <p className="text-sm text-muted-foreground">
-          End-user chat window
+          Conversational AI with <span className="text-epistemic-cyan">belief modeling</span> and personalization
         </p>
       </div>
 
@@ -86,13 +86,33 @@ export default function ChatPage() {
         ))}
         
         {conversation?.turns.length === 0 && (
-          <div className="text-center text-muted-foreground py-8">
-            Start a conversation by typing a message below.
+          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-epistemic-cyan to-epistemic-cyan-dark flex items-center justify-center mb-4">
+              <span className="text-2xl font-bold text-background">E</span>
+            </div>
+            <h3 className="text-lg font-semibold text-foreground">
+              Welcome to Epistemic Me
+            </h3>
+            <p className="text-center text-muted-foreground max-w-md">
+              Start a conversation and experience AI that understands your unique beliefs and perspectives. 
+              This system quantifies subjectivity to provide truly personalized interactions.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-4">
+              <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
+                Belief Modeling
+              </span>
+              <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
+                Personalization
+              </span>
+              <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
+                Subjectivity Analysis
+              </span>
+            </div>
           </div>
         )}
       </div>
 
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border bg-card/50">
         <MessageInput onSend={handleSendMessage} disabled={isLoading} />
       </div>
     </div>

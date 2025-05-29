@@ -52,6 +52,14 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Epistemic Me brand colors
+        epistemic: {
+          cyan: "hsl(var(--epistemic-cyan))",
+          "cyan-dark": "hsl(var(--epistemic-cyan-dark))",
+          "cyan-light": "hsl(var(--epistemic-cyan-light))",
+          background: "hsl(var(--epistemic-background))",
+          surface: "hsl(var(--epistemic-surface))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

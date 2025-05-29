@@ -4,48 +4,59 @@
 
 @layer base {
   :root {
+    /* Epistemic Me Brand Colors - Light Mode */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 216 19% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 216 19% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 216 19% 16%;
+    --primary: 174 100% 45%; /* Epistemic Me cyan */
+    --primary-foreground: 216 19% 16%;
+    --secondary: 174 30% 95%;
+    --secondary-foreground: 216 19% 16%;
+    --muted: 174 15% 96%;
+    --muted-foreground: 216 19% 46%;
+    --accent: 174 50% 85%;
+    --accent-foreground: 216 19% 16%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 174 20% 88%;
+    --input: 174 20% 88%;
+    --ring: 174 100% 45%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
+    /* Epistemic Me Brand Colors - Dark Mode (matching website) */
+    --background: 216 19% 8%; /* Very dark background like website */
+    --foreground: 174 20% 95%;
+    --card: 216 19% 12%;
+    --card-foreground: 174 20% 95%;
+    --popover: 216 19% 12%;
+    --popover-foreground: 174 20% 95%;
+    --primary: 174 100% 50%; /* Bright Epistemic Me cyan */
+    --primary-foreground: 216 19% 8%;
+    --secondary: 216 19% 16%;
+    --secondary-foreground: 174 20% 95%;
+    --muted: 216 19% 16%;
+    --muted-foreground: 174 15% 65%;
+    --accent: 174 80% 25%;
+    --accent-foreground: 174 20% 95%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 174 20% 95%;
+    --border: 216 19% 20%;
+    --input: 216 19% 20%;
+    --ring: 174 100% 50%;
+  }
+
+  /* Custom Epistemic Me brand colors */
+  :root {
+    --epistemic-cyan: 174 100% 50%;
+    --epistemic-cyan-dark: 174 80% 35%;
+    --epistemic-cyan-light: 174 60% 70%;
+    --epistemic-background: 216 19% 8%;
+    --epistemic-surface: 216 19% 12%;
   }
 }
 
