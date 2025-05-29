@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}User Workbench - Self-Management Agent{% endblock %}
+
+{% block header_text %}Developer user workbench{% endblock %}
+
+{% block content %}
+<div class="flex h-full">
+    <!-- Left sidebar - User list -->
+    <div class="w-1/3 border-r border-border">
+        <div class="p-4 border-b border-border">
+            <div class="flex items-center justify-between mb-2">
+                <h1 class="text-xl font-semibold">Simulated Users</h1>
+                <button class="btn-primary flex items-center gap-1">
+                    <i data-lucide="plus" class="h-4 w-4"></i>
+                    Create New User
+                </button>
+            </div>
+            <p class="text-sm text-muted-foreground">
+                Developer user workbench
+            </p>
+        </div>
+        
+        <div class="p-4 border-b border-border">
+            <div class="text-sm text-muted-foreground">{{ users|length }} users</div>
+        </div>
+        
+        <!-- User list -->
+        <div class="overflow-y-auto">
+            {% for user in users %}
+            <div class="user-item p-4 border-b border-border cursor-pointer hover:bg-accent transition-colors"
+                 hx-get="/user/{{ user.id }}" 
+                 hx-target="#user-detail"
+                 onclick="setActiveUser(this)">
+                <div class="mb-2">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                            <span class="text-primary-foreground text-xs font-medium">
+                                {{ user.demographics.occupation[0] }}{{ user.demographics.gender[0] }}
+                            </span>
+                        </div>
+                        <div>
+                            <div class="font-medium text-sm">{{ user.demographics.occupation }}</div>
+                            <div class="text-xs text-muted-foreground">
+                                {{ user.demographics.age }} • {{ user.demographics.gender }} • {{ user.demographics.location }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-1 mb-2">
+                    {% for tag in user.tags %}
+                    <span class="px-2 py-1 text-xs bg-primary/20 text-primary border border-primary/30 rounded">
+                        {{ tag }}
+                    </span>
+                    {% endfor %}
+                </div>
+                
+                <div class="text-xs text-muted-foreground">
+                    {{ user.philosophies|length }} philosophies
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if not users %}
+            <div class="p-4 text-center text-muted-foreground">
+                No users found
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Right panel - User detail -->
+    <div class="flex-1">
+        <div id="user-detail" class="h-full flex items-center justify-center text-muted-foreground">
+            Select a user to view profile
+        </div>
+    </div>
+</div>
+
+<script>
+    function setActiveUser(element) {
+        // Remove active class from all items
+        document.querySelectorAll('.user-item').forEach(item => {
+            item.classList.remove('bg-accent');
+        });
+        
+        // Add active class to selected item
+        element.classList.add('bg-accent');
+    }
+    
+    // Initialize Lucide icons when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %} 

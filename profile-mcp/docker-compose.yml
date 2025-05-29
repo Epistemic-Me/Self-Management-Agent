@@ -1,0 +1,45 @@
+services:
+  profile-mcp:
+    build: .
+    ports:
+      - "8010:8010"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - postgres
+      - minio
+      - redis
+    networks:
+      - mcp-net
+    volumes:
+      - .:/app
+      - /app/__pycache__
+      - /app/.pytest_cache
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8010 --reload
+  postgres:
+    image: postgres:15
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - mcp-net
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - .env
+    networks:
+      - mcp-net
+  redis:
+    image: redis:7
+    networks:
+      - mcp-net
+networks:
+  mcp-net:
+    driver: bridge

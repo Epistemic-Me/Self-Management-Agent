@@ -1,0 +1,3 @@
+[submodule "DD-MCP"]
+	path = DD-MCP
+	url = ../DD-MCP

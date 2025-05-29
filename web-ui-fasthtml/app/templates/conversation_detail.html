@@ -1,0 +1,200 @@
+<!-- Conversation detail fragment -->
+<div class="h-full flex">
+    <!-- Main conversation content -->
+    <div class="flex-1 p-6 overflow-y-auto">
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-2">Conversation Details</h2>
+            <div class="flex items-center gap-4 text-sm text-muted-foreground">
+                <span>Started: {{ conversation.started_at[:10] }}</span>
+                <span>{{ conversation.turns|length }} turns</span>
+                {% if conversation.closed %}
+                    <span class="text-green-400">Closed</span>
+                {% else %}
+                    <span class="text-blue-400">Active</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Conversation messages -->
+        <div class="space-y-4 mb-6">
+            {% for turn in conversation.turns %}
+            <div class="flex {% if turn.role == 'user' %}justify-end{% else %}justify-start{% endif %}">
+                <div class="max-w-[70%] {% if turn.role == 'user' %}bg-primary text-primary-foreground{% else %}bg-muted text-foreground{% endif %} rounded-lg p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="w-6 h-6 rounded-full {% if turn.role == 'user' %}bg-primary-foreground text-primary{% else %}bg-accent text-accent-foreground{% endif %} flex items-center justify-center text-xs font-medium">
+                            {% if turn.role == 'user' %}U{% else %}A{% endif %}
+                        </div>
+                        <span class="text-xs opacity-75">{{ turn.role.title() }}</span>
+                        <span class="text-xs opacity-75">{{ turn.created_at[11:16] }}</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">{{ turn.content }}</p>
+                    
+                    <!-- Metrics tags for this turn -->
+                    {% if turn.role == 'assistant' %}
+                    <div class="flex flex-wrap gap-1 mt-3">
+                        <span class="px-2 py-1 text-xs bg-red-500/20 text-red-400 rounded">ambiguity</span>
+                        <span class="px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded">learning Progress</span>
+                        <span class="px-2 py-1 text-xs bg-blue-500/20 text-blue-400 rounded">belief Evidencing</span>
+                        <span class="px-2 py-1 text-xs bg-purple-500/20 text-purple-400 rounded">belief Verification</span>
+                    </div>
+                    {% elif turn.role == 'user' %}
+                    <div class="flex flex-wrap gap-1 mt-3">
+                        <span class="px-2 py-1 text-xs bg-yellow-500/20 text-yellow-400 rounded">user Identification</span>
+                        <span class="px-2 py-1 text-xs bg-pink-500/20 text-pink-400 rounded">answer Prediction</span>
+                        <span class="px-2 py-1 text-xs bg-cyan-500/20 text-cyan-400 rounded">question Clarity</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Conversation metrics -->
+        {% if conversation.metrics %}
+        <div class="border-t border-border pt-6">
+            <h3 class="text-lg font-medium mb-4">Conversation Metrics</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {% if conversation.metrics.userIdentification %}
+                <div class="bg-muted p-3 rounded-lg">
+                    <div class="text-xs text-muted-foreground">User Identification</div>
+                    <div class="text-lg font-semibold">{{ "%.0f"|format(conversation.metrics.userIdentification * 100) }}%</div>
+                </div>
+                {% endif %}
+                {% if conversation.metrics.beliefEvidencing %}
+                <div class="bg-muted p-3 rounded-lg">
+                    <div class="text-xs text-muted-foreground">Belief Evidencing</div>
+                    <div class="text-lg font-semibold">{{ "%.0f"|format(conversation.metrics.beliefEvidencing * 100) }}%</div>
+                </div>
+                {% endif %}
+                {% if conversation.metrics.beliefVerification %}
+                <div class="bg-muted p-3 rounded-lg">
+                    <div class="text-xs text-muted-foreground">Belief Verification</div>
+                    <div class="text-lg font-semibold">{{ "%.0f"|format(conversation.metrics.beliefVerification * 100) }}%</div>
+                </div>
+                {% endif %}
+                {% if conversation.metrics.learningProgress %}
+                <div class="bg-muted p-3 rounded-lg">
+                    <div class="text-xs text-muted-foreground">Learning Progress</div>
+                    <div class="text-lg font-semibold">{{ "%.0f"|format(conversation.metrics.learningProgress * 100) }}%</div>
+                </div>
+                {% endif %}
+                {% if conversation.metrics.questionClarity %}
+                <div class="bg-muted p-3 rounded-lg">
+                    <div class="text-xs text-muted-foreground">Question Clarity</div>
+                    <div class="text-lg font-semibold">{{ "%.0f"|format(conversation.metrics.questionClarity * 100) }}%</div>
+                </div>
+                {% endif %}
+                {% if conversation.metrics.answerPrediction %}
+                <div class="bg-muted p-3 rounded-lg">
+                    <div class="text-xs text-muted-foreground">Answer Prediction</div>
+                    <div class="text-lg font-semibold">{{ "%.0f"|format(conversation.metrics.answerPrediction * 100) }}%</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Right sidebar - Belief Map -->
+    <div class="w-80 border-l border-border p-4 overflow-y-auto">
+        <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-medium">Belief Map</h3>
+                <button class="text-muted-foreground hover:text-foreground">
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Core Beliefs -->
+        <div class="mb-6">
+            <h4 class="text-sm font-medium mb-3 text-muted-foreground">Core Beliefs</h4>
+            <div class="space-y-3">
+                {% if conversation.belief_map and conversation.belief_map.core %}
+                    {% for belief in conversation.belief_map.core %}
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-blue-400">belief-{{ loop.index }}</div>
+                            <div class="text-xs text-muted-foreground">{{ "%.0f"|format(belief.confidence * 100) }}% confidence</div>
+                        </div>
+                        <p class="text-sm">{{ belief.statement }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-blue-400">belief-12</div>
+                            <div class="text-xs text-muted-foreground">95% confidence</div>
+                        </div>
+                        <p class="text-sm">Energy levels fluctuate naturally throughout the day</p>
+                    </div>
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-blue-400">belief-47</div>
+                            <div class="text-xs text-muted-foreground">90% confidence</div>
+                        </div>
+                        <p class="text-sm">Predictive processing is a core cognitive mechanism</p>
+                    </div>
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-blue-400">belief-23</div>
+                            <div class="text-xs text-muted-foreground">85% confidence</div>
+                        </div>
+                        <p class="text-sm">Active inference extends Bayesian brain theory</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Related Beliefs -->
+        <div class="mb-6">
+            <h4 class="text-sm font-medium mb-3 text-muted-foreground">Related Beliefs</h4>
+            <div class="space-y-3">
+                {% if conversation.belief_map and conversation.belief_map.related %}
+                    {% for belief in conversation.belief_map.related %}
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-green-400">belief-{{ loop.index + 50 }}</div>
+                            <div class="text-xs text-muted-foreground">{{ "%.0f"|format(belief.confidence * 100) }}% confidence</div>
+                        </div>
+                        <p class="text-sm">{{ belief.statement }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-green-400">belief-48</div>
+                            <div class="text-xs text-muted-foreground">80% confidence</div>
+                        </div>
+                        <p class="text-sm">Actions are taken to test predictions about the world</p>
+                    </div>
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-green-400">belief-52</div>
+                            <div class="text-xs text-muted-foreground">75% confidence</div>
+                        </div>
+                        <p class="text-sm">Perception and action are integrated processes</p>
+                    </div>
+                    <div class="p-3 bg-muted rounded-lg">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="text-xs font-medium text-green-400">belief-61</div>
+                            <div class="text-xs text-muted-foreground">70% confidence</div>
+                        </div>
+                        <p class="text-sm">Energy minimization drives cognitive processes</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Expand Button -->
+        <button class="w-full text-sm text-muted-foreground hover:text-foreground border border-border rounded-lg py-2 transition-colors">
+            <i data-lucide="chevron-down" class="h-4 w-4 inline mr-1"></i>
+            Show Expanded Belief Network
+        </button>
+    </div>
+</div>
+
+<script>
+    // Initialize Lucide icons for this fragment
+    lucide.createIcons();
+</script> 

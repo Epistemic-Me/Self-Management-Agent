@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { margin: 10px; padding: 10px; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f0f0f0; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Profile MCP API Test</h1>
+    <button onclick="testHealth()">Test Health</button>
+    <button onclick="testListUsers()">Test List Users</button>
+    <button onclick="testListConversations()">Test List Conversations</button>
+    <div id="result"></div>
+
+    <script>
+        const API_BASE = 'http://localhost:8010';
+        const TOKEN = 'TEST_TOKEN';
+        
+        const headers = {
+            'Authorization': `Bearer ${TOKEN}`,
+            'Content-Type': 'application/json',
+        };
+
+        async function apiTest(endpoint, description) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<p>Testing ${description}...</p>`;
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, { headers });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div class="success">✅ ${description} - Success</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">❌ ${description} - Error: ${error.message}</div>
+                    <p>Check the console for more details.</p>
+                `;
+                console.error(`${description} Error:`, error);
+            }
+        }
+        
+        async function testHealth() {
+            await apiTest('/health', 'Health Check');
+        }
+        
+        async function testListUsers() {
+            await apiTest('/listUsers', 'List Users');
+        }
+
+        async function testListConversations() {
+            await apiTest('/listConversations', 'List Conversations');
+        }
+    </script>
+</body>
+</html> 

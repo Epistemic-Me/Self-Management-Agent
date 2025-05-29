@@ -1,0 +1,30 @@
+services:
+  em-mcp:
+    build: .
+    ports:
+      - "8120:8120"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - PORT=8120
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - mcp-net
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8120 --reload
+
+  redis:
+    image: redis:7
+    ports:
+      - "6380:6379"
+    networks:
+      - mcp-net
+
+networks:
+  mcp-net:
+    driver: bridge 

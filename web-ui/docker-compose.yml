@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web-ui:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_MCP_BASE=http://localhost:8010
+      - NEXT_PUBLIC_EM_MCP=http://localhost:8120
+      - NEXT_PUBLIC_TOKEN=TEST_TOKEN
+# Note: In production, this would connect to external profile-mcp and em-mcp services
+    networks:
+      - self-management-network
+
+networks:
+  self-management-network:
+    driver: bridge 

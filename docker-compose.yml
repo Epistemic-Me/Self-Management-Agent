@@ -1,0 +1,175 @@
+services:
+  profile-mcp:
+    build: ./profile-mcp
+    ports:
+      - "8010:8010"
+    env_file:
+      - ./profile-mcp/.env
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/postgres
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - minio
+      - redis
+    networks:
+      - sma-net
+    volumes:
+      - ./profile-mcp:/app
+      - /app/__pycache__
+      - /app/.pytest_cache
+
+  profile-mcp-eval:
+    build: ./profile-mcp-eval
+    env_file:
+      - ./profile-mcp-eval/.env
+    environment:
+      - PYTHONPATH=/app
+      - REDIS_URL=redis://redis:6379/0
+      - PROFILE_MCP_URL=http://profile-mcp:8010
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - redis
+      - profile-mcp
+    networks:
+      - sma-net
+    volumes:
+      - ./profile-mcp-eval:/app
+      - /app/__pycache__
+
+  dd-mcp:
+    build: ./DD-MCP
+    ports:
+      - "8090:8090"
+    env_file:
+      - ./DD-MCP/.env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - DD_TOKEN=${DD_TOKEN}
+      - DD_CLIENT_ID=${DD_CLIENT_ID}
+    depends_on:
+      - redis
+    networks:
+      - sma-net
+    volumes:
+      - ./DD-MCP:/app
+
+  em-mcp:
+    build: ./em-mcp
+    ports:
+      - "8120:8120"
+    env_file:
+      - ./em-mcp/.env
+    environment:
+      - PYTHONPATH=/app
+      - PORT=8120
+      - REDIS_URL=redis://redis:6379/0
+      - PROFILE_MCP_URL=http://profile-mcp:8010
+    depends_on:
+      - redis
+      - profile-mcp
+    networks:
+      - sma-net
+    volumes:
+      - ./em-mcp:/app
+      - /app/__pycache__
+
+  user-setup:
+    build: ./profile-mcp  # Reuse profile-mcp image for Python environment
+    environment:
+      - PYTHONPATH=/app
+      - DD_TOKEN=${DD_TOKEN}
+      - DD_CLIENT_ID=${DD_CLIENT_ID}
+      - PROFILE_MCP_URL=http://profile-mcp:8010
+      - EM_MCP_URL=http://em-mcp:8120
+      - DD_MCP_URL=http://dd-mcp:8090
+      - TEST_TOKEN=TEST_TOKEN
+    depends_on:
+      - profile-mcp
+      - em-mcp
+      - dd-mcp
+    networks:
+      - sma-net
+    volumes:
+      - ./scripts:/app/scripts
+      - ./profile-mcp/requirements.txt:/app/requirements.txt
+    working_dir: /app
+    command: ["python", "/app/scripts/startup_user_creation.py"]
+    restart: "no"  # Only run once
+
+  postgres:
+    image: postgres:15
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+    networks:
+      - sma-net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    networks:
+      - sma-net
+    volumes:
+      - minio_data:/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    networks:
+      - sma-net
+    volumes:
+      - redis_data:/data
+
+  # Test runner service
+  test-runner:
+    build:
+      context: .
+      dockerfile: tests/Dockerfile
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/postgres
+      - REDIS_URL=redis://redis:6379/0
+      - PROFILE_MCP_URL=http://profile-mcp:8010
+      - DD_MCP_URL=http://dd-mcp:8090
+      - EM_MCP_URL=http://em-mcp:8120
+      - TEST_TOKEN=TEST_TOKEN
+      - TEST_USER_ID=user-0001
+    depends_on:
+      - profile-mcp
+      - dd-mcp
+      - em-mcp
+      - postgres
+      - redis
+    networks:
+      - sma-net
+    volumes:
+      - ./tests:/app/tests
+      - ./profile-mcp/app:/app/app
+    working_dir: /app
+    command: ["sleep", "infinity"]
+
+networks:
+  sma-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:
+  redis_data: 

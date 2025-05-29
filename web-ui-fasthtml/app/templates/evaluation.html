@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Evaluation - Self-Management Agent{% endblock %}
+
+{% block header_text %}Developer evaluation view{% endblock %}
+
+{% block content %}
+<div class="flex h-full">
+    <!-- Left sidebar - Conversation list -->
+    <div class="w-1/3 border-r border-border">
+        <div class="p-4 border-b border-border">
+            <div class="flex items-center justify-between mb-2">
+                <h1 class="text-xl font-semibold">Conversation Dataset</h1>
+                <div class="text-right">
+                    <div class="text-xs text-muted-foreground">Personalization Score</div>
+                    <div class="text-lg font-bold text-green-400">88% <span class="text-xs font-normal">overall</span></div>
+                </div>
+            </div>
+            <p class="text-sm text-muted-foreground">
+                Developer evaluation view
+            </p>
+            
+            <!-- Sub-metrics -->
+            <div class="mt-4 grid grid-cols-2 gap-4 text-xs">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-muted-foreground">user identification:</span>
+                        <span class="font-medium text-green-400">91%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-muted-foreground">belief Evidencing:</span>
+                        <span class="font-medium text-green-400">85%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <span class="text-muted-foreground">learning Progress:</span>
+                        <span class="font-medium text-orange-400">82%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span class="text-muted-foreground">question Clarity:</span>
+                        <span class="font-medium text-green-400">85%</span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span class="text-muted-foreground">belief Verification:</span>
+                        <span class="font-medium text-blue-400">75%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                        <span class="text-muted-foreground">ambiguity:</span>
+                        <span class="font-medium text-gray-400">16%</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        <span class="text-muted-foreground">answer Prediction:</span>
+                        <span class="font-medium text-purple-400">76%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter and search -->
+        <div class="p-4 border-b border-border">
+            <div class="flex items-center gap-2 mb-2">
+                <h2 class="font-medium">{{ conversations|length }} conversations</h2>
+                <button class="ml-auto text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
+                    <i data-lucide="filter" class="h-3 w-3 inline mr-1"></i>
+                    Show All
+                </button>
+            </div>
+        </div>
+        
+        <!-- Conversation list -->
+        <div class="overflow-y-auto">
+            {% if conversations %}
+                {% for conversation in conversations %}
+                <div class="conversation-item p-4 border-b border-border cursor-pointer hover:bg-accent transition-colors"
+                     hx-get="/conversation/{{ conversation.id }}" 
+                     hx-target="#conversation-detail"
+                     onclick="setActiveConversation(this)">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-sm font-medium truncate flex-1 mr-2">
+                            {% if conversation.last_turn %}
+                                {{ conversation.last_turn[:60] }}{% if conversation.last_turn|length > 60 %}...{% endif %}
+                            {% else %}
+                                New conversation
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center gap-1">
+                            {% set status_color = "bg-gray-500" %}
+                            {% if conversation.status == "Reviewed" %}
+                                {% set status_color = "bg-green-500" %}
+                            {% elif conversation.status == "Edited" %}
+                                {% set status_color = "bg-blue-500" %}
+                            {% elif conversation.status == "Simulating" %}
+                                {% set status_color = "bg-yellow-500" %}
+                            {% endif %}
+                            <div class="w-2 h-2 rounded-full {{ status_color }}"></div>
+                            {% if conversation.status %}
+                                <span class="text-xs text-muted-foreground">{{ conversation.status }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{{ conversation.turn_count or 0 }} turns</span>
+                        <span>{{ conversation.started_at[:10] }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="p-4 text-center text-muted-foreground">
+                    No conversations found
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Right panel - Conversation detail -->
+    <div class="flex-1">
+        <div id="conversation-detail" class="h-full flex items-center justify-center text-muted-foreground">
+            Select a conversation to view details
+        </div>
+    </div>
+</div>
+
+<script>
+    function setActiveConversation(element) {
+        // Remove active class from all items
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('bg-accent');
+        });
+        
+        // Add active class to selected item
+        element.classList.add('bg-accent');
+    }
+    
+    // Initialize Lucide icons when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %} 

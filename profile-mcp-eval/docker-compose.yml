@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  profile-mcp-eval:
+    build: .
+    container_name: profile-mcp-eval
+    environment:
+      - JOB_QUEUE_URL=redis://redis:6379/1
+      - PROFILE_MCP_BASE=http://profile-mcp:8010
+      - TOKEN=SIM_WORKER_TOKEN
+      - POLL_SEC=5
+      - LOG_LEVEL=INFO
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-3.5-turbo}
+    networks:
+      - profile-mcp_mcp-net
+    restart: unless-stopped
+    volumes:
+      - ./app:/app/app:ro  # Mount source for development
+    command: ["python", "/app/app/main.py"]
+
+  profile-mcp-eval-health:
+    build: .
+    container_name: profile-mcp-eval-health
+    environment:
+      - JOB_QUEUE_URL=redis://redis:6379/1
+      - PROFILE_MCP_BASE=http://profile-mcp:8010
+      - TOKEN=SIM_WORKER_TOKEN
+      - HEALTH_PORT=8100
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-3.5-turbo}
+    ports:
+      - "8100:8100"
+    networks:
+      - profile-mcp_mcp-net
+    restart: unless-stopped
+    command: ["python", "/app/app/health_server.py"]
+
+networks:
+  profile-mcp_mcp-net:
+    external: true  # Use existing network from profile-mcp
+
+# Note: Redis and profile-mcp services should already be running
+# This compose file connects to the existing profile-mcp stack 

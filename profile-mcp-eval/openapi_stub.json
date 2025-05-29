@@ -1,0 +1,45 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Profile MCP Eval - Background Worker",
+    "description": "Background worker that consumes simulation jobs, runs DeepEval ConversationSimulator, and writes simulated dialogue back to profile-mcp as stored conversations.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Check if the background worker is running and healthy",
+        "operationId": "health_check",
+        "responses": {
+          "200": {
+            "description": "Worker is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "healthy"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "queue_connection": {
+                      "type": "boolean"
+                    },
+                    "profile_mcp_connection": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+} 

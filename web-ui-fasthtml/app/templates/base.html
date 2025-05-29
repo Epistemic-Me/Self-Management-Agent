@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Self-Management Agent{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Custom styles for dark theme -->
+    <style>
+        :root {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 217.2 91.2% 59.8%;
+            --primary-foreground: 222.2 84% 4.9%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 224.3 76.3% 94.1%;
+            --radius: 0.5rem;
+        }
+        
+        /* Custom CSS classes for dark theme */
+        .bg-background { background-color: hsl(var(--background)) !important; }
+        .text-foreground { color: hsl(var(--foreground)) !important; }
+        .bg-card { background-color: hsl(var(--card)) !important; }
+        .text-card-foreground { color: hsl(var(--card-foreground)) !important; }
+        .bg-primary { background-color: hsl(var(--primary)) !important; }
+        .text-primary-foreground { color: hsl(var(--primary-foreground)) !important; }
+        .bg-secondary { background-color: hsl(var(--secondary)) !important; }
+        .text-secondary-foreground { color: hsl(var(--secondary-foreground)) !important; }
+        .bg-muted { background-color: hsl(var(--muted)) !important; }
+        .text-muted-foreground { color: hsl(var(--muted-foreground)) !important; }
+        .bg-accent { background-color: hsl(var(--accent)) !important; }
+        .text-accent-foreground { color: hsl(var(--accent-foreground)) !important; }
+        .border-border { border-color: hsl(var(--border)) !important; }
+        
+        /* Base styles */
+        * {
+            border-color: hsl(var(--border));
+        }
+        
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        
+        /* Navigation styles */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: hsl(var(--muted-foreground));
+        }
+        
+        .nav-item:hover {
+            color: hsl(var(--foreground));
+            background-color: hsl(var(--accent));
+        }
+        
+        .nav-item.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+        
+        /* Form controls */
+        input, textarea, select {
+            background-color: hsl(var(--muted));
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--foreground));
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            ring: 2px solid hsl(var(--primary));
+            border-color: transparent;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+        
+        .btn-secondary {
+            background-color: hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+            border: 1px solid hsl(var(--border));
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-secondary:hover {
+            background-color: hsl(var(--accent));
+        }
+        
+        /* Cards */
+        .card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1rem;
+        }
+        
+        /* Scrollbars */
+        ::-webkit-scrollbar {
+            width: 0.5rem;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: hsl(var(--muted));
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: hsl(var(--muted-foreground) / 0.3);
+            border-radius: 0.25rem;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: hsl(var(--muted-foreground) / 0.5);
+        }
+    </style>
+    
+    <script>
+        // Configure Tailwind for dark mode
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))"
+                        },
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))"
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))"
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))"
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))"
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(var(--destructive))",
+                            foreground: "hsl(var(--destructive-foreground))"
+                        }
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-foreground">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 border-r border-border bg-card">
+            <div class="p-4 border-b border-border">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 bg-primary rounded-md flex items-center justify-center">
+                        <span class="text-primary-foreground font-bold text-sm">E</span>
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-semibold text-foreground">Epistemic Me</h1>
+                    </div>
+                </div>
+                <p class="text-xs text-muted-foreground">SDK Playground</p>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <a href="/" class="nav-item" data-path="/">
+                    <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
+                    Dashboard
+                </a>
+                <a href="/chat" class="nav-item" data-path="/chat">
+                    <i data-lucide="message-circle" class="h-4 w-4"></i>
+                    Chat
+                </a>
+                <a href="/evaluation" class="nav-item" data-path="/evaluation">
+                    <i data-lucide="bar-chart-3" class="h-4 w-4"></i>
+                    Evaluation
+                </a>
+                <a href="/user-workbench" class="nav-item" data-path="/user-workbench">
+                    <i data-lucide="users" class="h-4 w-4"></i>
+                    User Workbench
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Top bar -->
+            <div class="h-14 border-b border-border bg-card flex items-center justify-between px-4">
+                <div class="text-sm text-muted-foreground">
+                    {% block header_text %}Build and evaluate your AI agents{% endblock %}
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="h-8 w-8 bg-muted rounded-full flex items-center justify-center">
+                        <span class="text-muted-foreground text-xs font-medium">DV</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page content -->
+            <div class="flex-1 overflow-hidden">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Add active navigation highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const path = item.getAttribute('data-path');
+                if (currentPath === path || (path !== '/' && currentPath.startsWith(path))) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+    </script>
+    
+
+</body>
+</html> 

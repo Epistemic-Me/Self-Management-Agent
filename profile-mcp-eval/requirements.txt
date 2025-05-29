@@ -1,0 +1,9 @@
+fastapi==0.111.0
+httpx[http2]
+redis[asyncio]
+deepeval>=0.8
+tenacity
+pydantic
+uvicorn
+python-multipart
+openai>=1.0.0 
