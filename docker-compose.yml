@@ -59,7 +59,9 @@ services:
       - ./DD-MCP:/app
 
   em-mcp:
-    build: ./em-mcp
+    build:
+      context: ..
+      dockerfile: Self-Management-Agent/em-mcp/Dockerfile
     ports:
       - "8120:8120"
     env_file:

@@ -6,10 +6,12 @@ WORKDIR /app
 COPY Python-SDK /tmp/python-sdk
 RUN cd /tmp/python-sdk && pip install -e .
 
-COPY Apps/self-management-agent/em-mcp/requirements.txt .
+# Copy and install requirements
+COPY Self-Management-Agent/em-mcp/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY Apps/self-management-agent/em-mcp .
+# Copy the application code
+COPY Self-Management-Agent/em-mcp .
 
 EXPOSE 8120
 
