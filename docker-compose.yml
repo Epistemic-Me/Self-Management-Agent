@@ -12,6 +12,9 @@ services:
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
       - REDIS_URL=redis://redis:6379/0
+      - DD_TOKEN=${DD_TOKEN}
+      - DD_CLIENT_ID=${DD_CLIENT_ID}
+      - DD_MCP_BASE_URL=http://dd-mcp:8090
     depends_on:
       - postgres
       - minio
