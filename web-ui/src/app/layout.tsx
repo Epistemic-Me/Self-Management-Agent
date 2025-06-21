@@ -58,17 +58,19 @@ export default function RootLayout({
           {/* Main content */}
           <div className="flex-1 flex flex-col relative z-10">
             {/* Top bar */}
-            <div className="h-14 border-b border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-between px-6">
-              <div className="text-sm text-slate-300">
-                <span className="text-cyan-400 font-medium">Build and evaluate</span> your AI agents with belief modeling
+            <div className="h-16 border-b border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-between px-6">
+              <div className="flex items-center space-x-4">
+                <div className="text-white font-medium">
+                  <span className="text-cyan-400 font-semibold">Build and evaluate</span> your AI agents with belief modeling
+                </div>
               </div>
               <div className="flex items-center gap-4">
-                <div className="text-xs text-slate-400 hidden sm:block">
+                <div className="text-slate-400 text-sm hidden lg:block">
                   Quantifying subjectivity in belief systems
                 </div>
-                <Avatar className="h-8 w-8 border-2 border-cyan-400 shadow-lg">
-                  <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-blue-500 text-white font-semibold">DV</AvatarFallback>
-                </Avatar>
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg border-2 border-cyan-400/50">
+                  <span className="text-white font-bold text-sm">DV</span>
+                </div>
               </div>
             </div>
 
