@@ -239,34 +239,37 @@ export default function ClientPortalPage() {
   const displayStakeholders = stakeholders || mockStakeholders;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Glass morphism overlay */}
+    <div className="flex flex-col h-full relative">
+      {/* Glass morphism background overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 backdrop-blur-3xl" />
       
-      <div className="relative z-10 flex-1 space-y-6 p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+      {/* Header with glassmorphism styling */}
+      <div className="relative z-10 p-4 border-b border-white/10 bg-white/5 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Client Portal</h1>
-            <p className="text-slate-400 text-lg">
+            <h1 className="text-2xl font-bold tracking-tight text-white">Client Portal</h1>
+            <p className="text-slate-400">
               Track progress and coordinate with stakeholders
             </p>
           </div>
-          <div className="flex items-center space-x-4">
-            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 px-4 py-2 text-sm font-medium" data-testid="phase-badge">
+          <div className="flex items-center space-x-3">
+            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 px-3 py-1" data-testid="phase-badge">
               <Calendar className="h-4 w-4 mr-2" />
               <span>Phase {currentPhase} Active</span>
             </Badge>
             <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
-              <Bell className="h-5 w-5 mr-2" />
-              <span className="sr-only">Notifications</span>
+              <Bell className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
-              <Settings className="h-5 w-5 mr-2" />
-              <span className="sr-only">Settings</span>
+              <Settings className="h-4 w-4" />
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Main content area */}
+      <div className="relative z-10 flex-1 overflow-auto p-6">
 
         {/* Main Content */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-8">
