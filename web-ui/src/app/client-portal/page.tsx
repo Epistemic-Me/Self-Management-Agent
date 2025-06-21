@@ -296,7 +296,7 @@ export default function ClientPortalPage() {
   const { data: stakeholders, isLoading: stakeholdersLoading, mutate: mutateStakeholders } = useStakeholders();
   const { data: phases, isLoading: phasesLoading } = usePhases();
 
-  const currentPhase = projectData?.currentPhase || 1;
+  const currentPhase = projectData?.currentPhase || 2;
 
   const handlePhaseSelect = (phaseId: number) => {
     logClientPortalActivity('phase_selected', { phaseId, previousPhase: currentPhase });
@@ -351,6 +351,14 @@ export default function ClientPortalPage() {
   // Use data from API or fallback to mock data
   const displayPhases = phases || mockPhases;
   const displayStakeholders = stakeholders || mockStakeholders;
+
+  // Debug logging to verify data
+  console.log('Client Portal Data:', {
+    currentPhase,
+    phasesCount: displayPhases?.length,
+    projectData,
+    phases: phases?.length
+  });
 
   return (
     <div className="flex flex-col h-full">
