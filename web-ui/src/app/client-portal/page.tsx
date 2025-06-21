@@ -27,7 +27,7 @@ import {
   logClientPortalActivity
 } from '@/lib/api/client-portal';
 
-// Mock data for demonstration
+// Mock data for demonstration - All 6 phases
 const mockPhases = [
   {
     id: 1,
@@ -39,7 +39,8 @@ const mockPhases = [
     keyDeliverables: [
       'Client onboarding completed',
       'Authentication system implemented',
-      'Trace collection system operational'
+      'Trace collection system operational',
+      'Project management dashboard deployed'
     ],
     stakeholderFocus: ['Developer', 'SME'],
     milestones: [
@@ -69,7 +70,8 @@ const mockPhases = [
     keyDeliverables: [
       'Open coding interface implementation',
       'Collaborative labeling system',
-      'Quality metrics dashboard'
+      'Quality metrics dashboard',
+      'SME training workflow integration'
     ],
     stakeholderFocus: ['SME', 'Analyst'],
     milestones: [
@@ -99,10 +101,122 @@ const mockPhases = [
     keyDeliverables: [
       'Failure analysis workbench',
       'Taxonomy builder interface',
-      'Golden traces management'
+      'Golden traces management',
+      'Automated failure detection system'
     ],
     stakeholderFocus: ['SME', 'Analyst'],
-    milestones: []
+    milestones: [
+      {
+        id: '3.1',
+        name: 'Failure Analysis Framework',
+        completed: false,
+        description: 'Develop systematic failure categorization system',
+        dueDate: '2024-03-01'
+      },
+      {
+        id: '3.2',
+        name: 'Taxonomy Builder',
+        completed: false,
+        description: 'Build interactive taxonomy creation interface',
+        dueDate: '2024-03-15'
+      }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Advanced Analytics & Insights Engine',
+    description: 'AI-powered analytics for pattern recognition and predictive insights',
+    status: 'pending' as const,
+    progress: 0,
+    estimatedDuration: '5-6 weeks',
+    keyDeliverables: [
+      'Machine learning pipeline deployment',
+      'Pattern recognition algorithms',
+      'Predictive analytics dashboard',
+      'Automated insight generation',
+      'Performance optimization system'
+    ],
+    stakeholderFocus: ['Analyst', 'Developer'],
+    milestones: [
+      {
+        id: '4.1',
+        name: 'ML Pipeline Setup',
+        completed: false,
+        description: 'Establish machine learning infrastructure',
+        dueDate: '2024-04-01'
+      },
+      {
+        id: '4.2',
+        name: 'Analytics Dashboard',
+        completed: false,
+        description: 'Build comprehensive analytics visualization',
+        dueDate: '2024-04-20'
+      }
+    ]
+  },
+  {
+    id: 5,
+    name: 'Optimization & Performance Tuning',
+    description: 'System optimization, performance monitoring, and scalability improvements',
+    status: 'pending' as const,
+    progress: 0,
+    estimatedDuration: '3-4 weeks',
+    keyDeliverables: [
+      'Performance monitoring dashboard',
+      'Automated optimization systems',
+      'Scalability architecture implementation',
+      'Load testing and capacity planning',
+      'Security hardening and compliance'
+    ],
+    stakeholderFocus: ['Developer', 'SME'],
+    milestones: [
+      {
+        id: '5.1',
+        name: 'Performance Monitoring',
+        completed: false,
+        description: 'Implement comprehensive system monitoring',
+        dueDate: '2024-05-01'
+      },
+      {
+        id: '5.2',
+        name: 'Scalability Implementation',
+        completed: false,
+        description: 'Deploy auto-scaling and load balancing',
+        dueDate: '2024-05-15'
+      }
+    ]
+  },
+  {
+    id: 6,
+    name: 'Deployment & Knowledge Transfer',
+    description: 'Production deployment, documentation, and comprehensive knowledge transfer',
+    status: 'pending' as const,
+    progress: 0,
+    estimatedDuration: '2-3 weeks',
+    keyDeliverables: [
+      'Production environment deployment',
+      'Comprehensive documentation suite',
+      'User training materials and sessions',
+      'Maintenance and support procedures',
+      'Final system validation and sign-off'
+    ],
+    stakeholderFocus: ['Developer', 'SME', 'Analyst'],
+    milestones: [
+      {
+        id: '6.1',
+        name: 'Production Deployment',
+        completed: false,
+        description: 'Deploy system to production environment',
+        dueDate: '2024-06-01'
+      },
+      {
+        id: '6.2',
+        name: 'Knowledge Transfer',
+        completed: false,
+        description: 'Complete documentation and training',
+        dueDate: '2024-06-10'
+      }
+    ]
   }
 ];
 
@@ -252,7 +366,7 @@ export default function ClientPortalPage() {
           <div className="flex items-center space-x-3">
             <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 px-3 py-1" data-testid="phase-badge">
               <Calendar className="h-4 w-4 mr-2" />
-              <span>Phase {currentPhase} Active</span>
+              <span>Phase {currentPhase} of 6 Active</span>
             </Badge>
             <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
               <Bell className="h-4 w-4" />
