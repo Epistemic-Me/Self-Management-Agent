@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -14,7 +13,8 @@ import {
   Brain, 
   Zap, 
   BarChart3, 
-  BookOpen 
+  BookOpen,
+  ArrowLeft
 } from 'lucide-react';
 
 interface PhaseInfo {
@@ -36,131 +36,151 @@ interface PhaseNavigationProps {
 
 export function PhaseNavigation({ currentPhase, phases, onPhaseSelect, className }: PhaseNavigationProps) {
   const getPhaseIcon = (phaseId: number) => {
+    const iconClass = "h-5 w-5";
     switch (phaseId) {
       case 1:
-        return <Users className="h-5 w-5" />;
+        return <Users className={iconClass} />;
       case 2:
-        return <Database className="h-5 w-5" />;
+        return <Database className={iconClass} />;
       case 3:
-        return <Brain className="h-5 w-5" />;
+        return <Brain className={iconClass} />;
       case 4:
-        return <Zap className="h-5 w-5" />;
+        return <Zap className={iconClass} />;
       case 5:
-        return <BarChart3 className="h-5 w-5" />;
+        return <BarChart3 className={iconClass} />;
       case 6:
-        return <BookOpen className="h-5 w-5" />;
+        return <BookOpen className={iconClass} />;
       default:
-        return <Circle className="h-5 w-5" />;
+        return <Circle className={iconClass} />;
     }
   };
 
-  const getStatusIcon = (status: PhaseInfo['status'], phaseId: number) => {
-    if (status === 'completed') {
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    } else if (status === 'active') {
-      return <Clock className="h-4 w-4 text-blue-500" />;
-    } else {
-      return <Circle className="h-4 w-4 text-gray-400" />;
-    }
-  };
-
-  const getStatusColor = (status: PhaseInfo['status']) => {
+  const getStatusIcon = (status: PhaseInfo['status']) => {
     switch (status) {
       case 'completed':
-        return 'text-green-600 bg-green-50 border-green-200';
+        return <CheckCircle className="h-5 w-5 text-green-400" />;
       case 'active':
-        return 'text-blue-600 bg-blue-50 border-blue-200';
+        return <Clock className="h-5 w-5 text-blue-400" />;
       default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+        return <Circle className="h-5 w-5 text-slate-500" />;
+    }
+  };
+
+  const getStatusGradient = (status: PhaseInfo['status']) => {
+    switch (status) {
+      case 'completed':
+        return 'from-green-500 to-emerald-500';
+      case 'active':
+        return 'from-blue-500 to-purple-500';
+      default:
+        return 'from-slate-600 to-slate-500';
+    }
+  };
+
+  const getPhaseGradient = (phaseId: number) => {
+    switch (phaseId) {
+      case 1:
+        return 'from-purple-500 to-indigo-500';
+      case 2:
+        return 'from-blue-500 to-cyan-500';
+      case 3:
+        return 'from-green-500 to-emerald-500';
+      case 4:
+        return 'from-yellow-500 to-orange-500';
+      case 5:
+        return 'from-red-500 to-pink-500';
+      case 6:
+        return 'from-indigo-500 to-purple-500';
+      default:
+        return 'from-gray-500 to-slate-500';
     }
   };
 
   const canNavigateToPhase = (phaseId: number, status: PhaseInfo['status']) => {
-    // Can navigate to completed phases, current phase, or next pending phase
     return status === 'completed' || status === 'active' || phaseId <= currentPhase + 1;
   };
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <span>Engagement Phases</span>
-          <Badge variant="outline">
-            Phase {currentPhase} of {phases.length}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-3">
+    <div className={className}>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-white">Engagement Phases</h2>
+        <Badge className="bg-gradient-to-r from-slate-600 to-slate-500 text-white border-0 px-3 py-1">
+          Phase {currentPhase} of {phases.length}
+        </Badge>
+      </div>
+
+      <div className="space-y-6">
+        <div className="space-y-4">
           {phases.map((phase, index) => {
             const isClickable = canNavigateToPhase(phase.id, phase.status);
             const isActive = phase.id === currentPhase;
             
             return (
-              <div
-                key={phase.id}
-                className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
-                  isActive 
-                    ? 'border-primary bg-primary/5' 
-                    : getStatusColor(phase.status)
-                } ${isClickable ? 'cursor-pointer hover:shadow-md' : 'cursor-not-allowed opacity-60'}`}
-                onClick={() => isClickable && onPhaseSelect?.(phase.id)}
-              >
-                {/* Phase header */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-full ${
-                      isActive ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                    }`}>
-                      {getPhaseIcon(phase.id)}
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <h3 className="font-medium">Phase {phase.id}: {phase.name}</h3>
-                        {getStatusIcon(phase.status, phase.id)}
+              <div key={phase.id} className="relative">
+                <div
+                  className={`bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 transition-all duration-300 ${
+                    isActive 
+                      ? 'bg-white/10 border-blue-400/30 shadow-lg shadow-blue-500/20' 
+                      : 'hover:bg-white/10'
+                  } ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
+                  onClick={() => isClickable && onPhaseSelect?.(phase.id)}
+                >
+                  {/* Phase header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-4">
+                      <div className={`p-3 rounded-xl bg-gradient-to-br ${getPhaseGradient(phase.id)} shadow-lg`}>
+                        {getPhaseIcon(phase.id)}
                       </div>
-                      <p className="text-sm text-muted-foreground">{phase.description}</p>
+                      <div>
+                        <div className="flex items-center space-x-3 mb-1">
+                          <h3 className="text-white font-semibold text-lg">
+                            Phase {phase.id}: {phase.name}
+                          </h3>
+                          {getStatusIcon(phase.status)}
+                        </div>
+                        <p className="text-slate-400">{phase.description}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge className={`bg-gradient-to-r ${getStatusGradient(phase.status)} text-white border-0 text-xs px-3 py-1`}>
+                        {phase.estimatedDuration}
+                      </Badge>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge variant="outline" className="text-xs">
-                      {phase.estimatedDuration}
-                    </Badge>
-                  </div>
-                </div>
 
-                {/* Phase details (expanded for active phase) */}
-                {isActive && (
-                  <div className="space-y-3 pt-3 border-t border-border">
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Key Deliverables</h4>
-                      <ul className="space-y-1">
-                        {phase.keyDeliverables.map((deliverable, idx) => (
-                          <li key={idx} className="text-sm text-muted-foreground flex items-center space-x-2">
-                            <Circle className="h-3 w-3 flex-shrink-0" />
-                            <span>{deliverable}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Stakeholder Focus</h4>
-                      <div className="flex flex-wrap gap-1">
-                        {phase.stakeholderFocus.map((stakeholder, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
-                            {stakeholder}
-                          </Badge>
-                        ))}
+                  {/* Phase details (expanded for active phase) */}
+                  {isActive && (
+                    <div className="space-y-4 pt-4 border-t border-white/10">
+                      <div>
+                        <h4 className="text-white font-medium mb-3">Key Deliverables</h4>
+                        <div className="space-y-2">
+                          {phase.keyDeliverables.map((deliverable, idx) => (
+                            <div key={idx} className="flex items-center space-x-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3">
+                              <CheckCircle className="h-4 w-4 text-green-400 flex-shrink-0" />
+                              <span className="text-slate-300">{deliverable}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-white font-medium mb-3">Stakeholder Focus</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {phase.stakeholderFocus.map((stakeholder, idx) => (
+                            <Badge key={idx} className={`bg-gradient-to-r ${getPhaseGradient(phase.id)} text-white border-0 text-xs px-3 py-1`}>
+                              {stakeholder}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Connection line to next phase */}
                 {index < phases.length - 1 && (
-                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                    <div className="w-1 h-4 bg-border"></div>
+                  <div className="flex justify-center py-3">
+                    <div className="w-1 h-6 bg-gradient-to-b from-white/20 to-white/10 rounded-full"></div>
                   </div>
                 )}
               </div>
@@ -169,13 +189,15 @@ export function PhaseNavigation({ currentPhase, phases, onPhaseSelect, className
         </div>
 
         {/* Navigation actions */}
-        <div className="flex justify-between pt-4 border-t border-border">
+        <div className="flex justify-between pt-6 border-t border-white/10">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             disabled={currentPhase <= 1}
             onClick={() => onPhaseSelect?.(currentPhase - 1)}
+            className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-300 disabled:opacity-30"
           >
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Previous Phase
           </Button>
           
@@ -183,12 +205,13 @@ export function PhaseNavigation({ currentPhase, phases, onPhaseSelect, className
             size="sm"
             disabled={currentPhase >= phases.length}
             onClick={() => onPhaseSelect?.(currentPhase + 1)}
+            className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 transition-all duration-300 disabled:opacity-30"
           >
             Next Phase
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
