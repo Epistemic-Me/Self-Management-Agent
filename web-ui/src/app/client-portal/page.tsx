@@ -239,13 +239,9 @@ export default function ClientPortalPage() {
   const displayStakeholders = stakeholders || mockStakeholders;
 
   return (
-    <div className="flex flex-col h-full relative">
-      {/* Glass morphism background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 backdrop-blur-3xl" />
-      
+    <div className="flex flex-col h-full">
       {/* Header with glassmorphism styling */}
-      <div className="relative z-10 p-4 border-b border-white/10 bg-white/5 backdrop-blur-sm">
+      <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-white">Client Portal</h1>
@@ -269,7 +265,7 @@ export default function ClientPortalPage() {
       </div>
 
       {/* Main content area */}
-      <div className="relative z-10 flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-6">
 
         {/* Main Content */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-8">

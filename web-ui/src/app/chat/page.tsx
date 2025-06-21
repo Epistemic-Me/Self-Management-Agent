@@ -68,10 +68,10 @@ export default function ChatPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-border bg-gradient-to-r from-card to-epistemic-surface">
-        <h1 className="text-xl font-semibold text-foreground">Chat Interface</h1>
-        <p className="text-sm text-muted-foreground">
-          Conversational AI with <span className="text-epistemic-cyan">belief modeling</span> and personalization
+      <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-sm">
+        <h1 className="text-xl font-semibold text-white">Chat Interface</h1>
+        <p className="text-sm text-slate-400">
+          Conversational AI with <span className="text-cyan-400">belief modeling</span> and personalization
         </p>
       </div>
 
