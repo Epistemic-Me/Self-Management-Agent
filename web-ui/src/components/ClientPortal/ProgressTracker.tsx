@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Circle, Clock } from 'lucide-react';
 
@@ -32,22 +30,22 @@ export function ProgressTracker({ currentPhase, phases, className }: ProgressTra
   const getStatusIcon = (status: Phase['status']) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-5 w-5 text-green-400" />;
       case 'active':
-        return <Clock className="h-4 w-4 text-blue-500" />;
+        return <Clock className="h-5 w-5 text-blue-400" />;
       default:
-        return <Circle className="h-4 w-4 text-gray-400" />;
+        return <Circle className="h-5 w-5 text-slate-500" />;
     }
   };
 
   const getStatusColor = (status: Phase['status']) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-500';
+        return 'from-green-500 to-emerald-500';
       case 'active':
-        return 'bg-blue-500';
+        return 'from-blue-500 to-purple-500';
       default:
-        return 'bg-gray-300';
+        return 'from-slate-600 to-slate-500';
     }
   };
 
@@ -55,42 +53,59 @@ export function ProgressTracker({ currentPhase, phases, className }: ProgressTra
   const overallProgress = phases.reduce((acc, phase) => acc + phase.progress, 0) / phases.length;
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          Project Progress
-          <Badge variant="outline" className="text-sm">
-            Phase {currentPhase} of {phases.length}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div className={className}>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-white">Project Progress</h2>
+        <Badge className="bg-gradient-to-r from-slate-600 to-slate-500 text-white border-0 px-3 py-1">
+          Phase {currentPhase} of {phases.length}
+        </Badge>
+      </div>
+      <div className="space-y-8">
         {/* Overall Progress */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Overall Progress</span>
-            <span className="font-medium">{Math.round(overallProgress)}%</span>
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-lg font-medium text-white">Overall Completion</span>
+            <span className="text-2xl font-bold text-white">{Math.round(overallProgress)}%</span>
           </div>
-          <Progress value={overallProgress} className="h-2" />
+          <div className="relative h-4 bg-white/10 rounded-full overflow-hidden backdrop-blur-sm">
+            <div 
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${overallProgress}%` }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+          </div>
         </div>
 
         {/* Phase Progress */}
-        <div className="space-y-4">
-          <h4 className="text-sm font-medium">Engagement Phases</h4>
-          <div className="space-y-3">
+        <div>
+          <h3 className="text-xl font-semibold mb-6 text-white">Engagement Phases</h3>
+          <div className="space-y-4">
             {phases.map((phase) => (
-              <div key={phase.id} className="flex items-center space-x-3">
-                {getStatusIcon(phase.status)}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium truncate">
-                      Phase {phase.id}: {phase.name}
-                    </p>
-                    <span className="text-xs text-muted-foreground ml-2">
-                      {phase.progress}%
-                    </span>
+              <div key={phase.id} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0">
+                    {getStatusIcon(phase.status)}
                   </div>
-                  <Progress value={phase.progress} className="h-1 mt-1" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white font-medium truncate">
+                        Phase {phase.id}: {phase.name}
+                      </span>
+                      <span className="text-slate-300 font-semibold">
+                        {phase.progress}%
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="flex-1">
+                        <div className="h-3 bg-white/10 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full bg-gradient-to-r ${getStatusColor(phase.status)} transition-all duration-1000 ease-out rounded-full`}
+                            style={{ width: `${phase.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -98,27 +113,29 @@ export function ProgressTracker({ currentPhase, phases, className }: ProgressTra
         </div>
 
         {/* Current Phase Milestones */}
-        {activePhase && (
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium">Current Phase Milestones</h4>
-            <div className="space-y-2">
+        {activePhase && activePhase.milestones.length > 0 && (
+          <div>
+            <h3 className="text-xl font-semibold mb-6 text-white">Current Phase Milestones</h3>
+            <div className="space-y-3">
               {activePhase.milestones.map((milestone) => (
-                <div key={milestone.id} className="flex items-center space-x-3 p-2 rounded-lg bg-muted/50">
-                  {milestone.completed ? (
-                    <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  ) : (
-                    <Circle className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm ${milestone.completed ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+                <div key={milestone.id} className="flex items-center space-x-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-3 hover:bg-white/10 transition-all duration-300">
+                  <div className="flex-shrink-0">
+                    {milestone.completed ? (
+                      <CheckCircle className="h-5 w-5 text-green-400" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-slate-400" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <span className={`text-white ${milestone.completed ? 'line-through opacity-60' : ''}`}>
                       {milestone.name}
-                    </p>
+                    </span>
                     {milestone.description && (
-                      <p className="text-xs text-muted-foreground mt-1">{milestone.description}</p>
+                      <p className="text-slate-400 text-sm mt-1">{milestone.description}</p>
                     )}
                   </div>
                   {milestone.dueDate && (
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 text-xs">
                       Due {milestone.dueDate}
                     </Badge>
                   )}
@@ -127,7 +144,7 @@ export function ProgressTracker({ currentPhase, phases, className }: ProgressTra
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

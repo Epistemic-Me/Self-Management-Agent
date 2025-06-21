@@ -239,124 +239,149 @@ export default function ClientPortalPage() {
   const displayStakeholders = stakeholders || mockStakeholders;
 
   return (
-    <div className="flex-1 space-y-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Client Portal</h1>
-          <p className="text-muted-foreground">
-            Track your project progress and coordinate with stakeholders
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Glass morphism overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 backdrop-blur-3xl" />
+      
+      <div className="relative z-10 flex-1 space-y-6 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight text-white mb-2">Client Portal</h1>
+            <p className="text-slate-400 text-lg">
+              Track progress and coordinate with stakeholders
+            </p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 px-4 py-2 text-sm font-medium" data-testid="phase-badge">
+              <Calendar className="h-4 w-4 mr-2" />
+              <span>Phase {currentPhase} Active</span>
+            </Badge>
+            <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
+              <Bell className="h-5 w-5 mr-2" />
+              <span className="sr-only">Notifications</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
+              <Settings className="h-5 w-5 mr-2" />
+              <span className="sr-only">Settings</span>
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center space-x-3">
-          <Badge variant="outline" className="flex items-center space-x-1" data-testid="phase-badge">
-            <Calendar className="h-3 w-3" />
-            <span>Phase {currentPhase} Active</span>
-          </Badge>
-          <Button variant="outline" size="sm">
-            <Bell className="h-4 w-4 mr-2" />
-            Notifications
-          </Button>
-          <Button variant="outline" size="sm">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </Button>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview" className="flex items-center space-x-2">
-            <Rocket className="h-4 w-4" />
-            <span>Overview</span>
-          </TabsTrigger>
-          <TabsTrigger value="progress" className="flex items-center space-x-2">
-            <BarChart3 className="h-4 w-4" />
-            <span>Progress</span>
-          </TabsTrigger>
-          <TabsTrigger value="stakeholders" className="flex items-center space-x-2">
-            <Users className="h-4 w-4" />
-            <span>Stakeholders</span>
-          </TabsTrigger>
-          <TabsTrigger value="phases" className="flex items-center space-x-2">
-            <Calendar className="h-4 w-4" />
-            <span>Phases</span>
-          </TabsTrigger>
-        </TabsList>
+        {/* Main Content */}
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-8">
+          <TabsList className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-1 grid w-full grid-cols-4">
+            <TabsTrigger 
+              value="overview" 
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+            >
+              <Rocket className="h-4 w-4" />
+              <span>Overview</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="progress" 
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span>Progress</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="stakeholders" 
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+            >
+              <Users className="h-4 w-4" />
+              <span>Stakeholders</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="phases" 
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+            >
+              <Calendar className="h-4 w-4" />
+              <span>Phases</span>
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
-              {/* Progress Overview */}
+          <TabsContent value="overview" className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 space-y-8">
+                {/* Progress Overview */}
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+                  <ProgressTracker
+                    currentPhase={currentPhase}
+                    phases={displayPhases}
+                  />
+                </div>
+                
+                {/* Active Milestones */}
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+                  <h3 className="text-xl font-semibold text-white mb-6">Active Milestones</h3>
+                  <div className="space-y-4">
+                    {activeMilestones.length === 0 ? (
+                      <p className="text-slate-400 text-center py-8">
+                        No active milestones
+                      </p>
+                    ) : (
+                      activeMilestones.map((milestone) => (
+                        <MilestoneCard
+                          key={milestone.id}
+                          milestone={milestone}
+                          onUpdateTask={handleUpdateTask}
+                          onViewDetails={handleViewMilestoneDetails}
+                        />
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                {/* Stakeholder Summary */}
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+                  <StakeholderView
+                    stakeholders={displayStakeholders}
+                    currentUserRole={currentUserRole}
+                    onInviteStakeholder={handleInviteStakeholder}
+                    onUpdateStakeholder={handleUpdateStakeholder}
+                  />
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="progress" className="space-y-8">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
               <ProgressTracker
                 currentPhase={currentPhase}
                 phases={displayPhases}
+                className="w-full"
               />
-              
-              {/* Active Milestones */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Active Milestones</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {activeMilestones.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-8">
-                      No active milestones
-                    </p>
-                  ) : (
-                    activeMilestones.map((milestone) => (
-                      <MilestoneCard
-                        key={milestone.id}
-                        milestone={milestone}
-                        onUpdateTask={handleUpdateTask}
-                        onViewDetails={handleViewMilestoneDetails}
-                      />
-                    ))
-                  )}
-                </CardContent>
-              </Card>
             </div>
+          </TabsContent>
 
-            <div className="space-y-6">
-              {/* Stakeholder Summary */}
+          <TabsContent value="stakeholders" className="space-y-8">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
               <StakeholderView
                 stakeholders={displayStakeholders}
                 currentUserRole={currentUserRole}
                 onInviteStakeholder={handleInviteStakeholder}
                 onUpdateStakeholder={handleUpdateStakeholder}
+                className="w-full"
               />
             </div>
-          </div>
-        </TabsContent>
+          </TabsContent>
 
-        <TabsContent value="progress" className="space-y-6">
-          <ProgressTracker
-            currentPhase={currentPhase}
-            phases={displayPhases}
-            className="w-full"
-          />
-        </TabsContent>
-
-        <TabsContent value="stakeholders" className="space-y-6">
-          <StakeholderView
-            stakeholders={displayStakeholders}
-            currentUserRole={currentUserRole}
-            onInviteStakeholder={handleInviteStakeholder}
-            onUpdateStakeholder={handleUpdateStakeholder}
-            className="w-full"
-          />
-        </TabsContent>
-
-        <TabsContent value="phases" className="space-y-6">
-          <PhaseNavigation
-            currentPhase={currentPhase}
-            phases={displayPhases}
-            onPhaseSelect={handlePhaseSelect}
-            className="w-full"
-          />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="phases" className="space-y-8">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+              <PhaseNavigation
+                currentPhase={currentPhase}
+                phases={displayPhases}
+                onPhaseSelect={handlePhaseSelect}
+                className="w-full"
+              />
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
