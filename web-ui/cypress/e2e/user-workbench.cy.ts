@@ -16,7 +16,7 @@ describe('User Workbench - Run Simulation', () => {
     cy.visit('/user-workbench')
     
     // Check that the page loads
-    cy.contains('Simulated Users').should('be.visible')
+    cy.contains('Real Users').should('be.visible')
     
     // Select the first user (assuming mock data exists)
     cy.get('[data-testid="user-item"]').first().click()

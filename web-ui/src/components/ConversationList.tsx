@@ -47,7 +47,7 @@ export function ConversationList({ onSelectConversation, selectedConversation }:
   }
 
   return (
-    <div className="overflow-y-auto">
+    <div className="overflow-y-auto" data-testid="conversation-list">
       {conversations.map((conversation) => (
         <div
           key={conversation.id}
@@ -56,6 +56,7 @@ export function ConversationList({ onSelectConversation, selectedConversation }:
             'p-4 border-b border-border cursor-pointer hover:bg-accent transition-colors',
             selectedConversation?.id === conversation.id && 'bg-accent'
           )}
+          data-testid="conversation-item"
         >
           <div className="flex items-center justify-between mb-2">
             <div className="text-sm font-medium truncate">
