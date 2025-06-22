@@ -2,13 +2,18 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, BarChart3, Users, Rocket } from 'lucide-react';
+import { MessageCircle, BarChart3, Users, Rocket, FileText } from 'lucide-react';
 
 const navItems = [
   {
     title: 'Client Portal',
     href: '/client-portal',
     icon: Rocket,
+  },
+  {
+    title: 'Project Setup',
+    href: '/project-setup',
+    icon: FileText,
   },
   {
     title: 'Chat',
