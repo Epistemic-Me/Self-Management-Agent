@@ -151,6 +151,7 @@ MANUAL_CLEANUP_COMMANDS.md
 cleanup_repository.sh
 quick_cleanup.sh
 run_cleanup.sh
+dev-setup-*.sh
 debug_*.py
 test_*.py
 
