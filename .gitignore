@@ -121,4 +121,57 @@ dist/
 # Docker volumes
 postgres_data/
 minio_data/
-redis_data/ 
+redis_data/
+
+# Local working directories (from repository cleanup)
+/analysis/
+/validation/
+/temp/
+*.tmp
+*_temp.*
+
+# Development logs and session summaries
+dev-logs/
+**/SESSION_SUMMARY.md
+**/*.backup
+
+# Planning and documentation artifacts
+refactored_*.md
+simplified_*.md
+updated_*.md
+IMPLEMENTATION_PLAN*.md
+ISSUE_*_IMPLEMENTATION_PLAN.md
+PROJECT_SUMMARY.md
+REPOSITORY_CLEANUP_STRATEGY.md
+STRATEGIC_DECISIONS_FRAMEWORK.md
+constraint_compliant_*.md
+MANUAL_CLEANUP_COMMANDS.md
+
+# Temporary scripts and debug files
+cleanup_repository.sh
+quick_cleanup.sh
+run_cleanup.sh
+dev-setup-*.sh
+debug_*.py
+test_*.py
+
+# Test coverage reports (additional)
+**/coverage/
+**/lcov-report/
+**/test-results/
+**/clover.xml
+**/lcov.info
+**/coverage-final.json
+
+# Enhanced config files
+*.config.enhanced.*
+*.enhanced.*
+
+# Tools directory (appears to be temporary)
+tools/
+
+# Documentation directory (if temporary)
+docs/
+
+# Test fixtures (if generated)
+**/cypress/fixtures/

@@ -12,7 +12,7 @@ describe('ChatBubble', () => {
     )
 
     expect(screen.getByText('Hello, this is a test message')).toBeInTheDocument()
-    expect(screen.getByText(/10:30/)).toBeInTheDocument()
+    expect(screen.getByText(/2:30:00 AM/)).toBeInTheDocument()
   })
 
   it('renders assistant message correctly', () => {
