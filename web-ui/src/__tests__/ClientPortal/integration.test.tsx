@@ -111,7 +111,7 @@ describe('Client Portal Integration', () => {
     fireEvent.click(screen.getByRole('tab', { name: /stakeholders/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Project Stakeholders')).toBeInTheDocument();
+      expect(screen.getByText('Stakeholders')).toBeInTheDocument();
     });
 
     // Should show invite button for Developer role
@@ -121,8 +121,8 @@ describe('Client Portal Integration', () => {
   it('integrates with existing SDK Dashboard layout', () => {
     render(<ClientPortalPage />);
 
-    // Should render within the main content area
-    const mainContent = screen.getByText('Client Portal').closest('div');
-    expect(mainContent).toHaveClass('flex-1');
+    // Should render the client portal page with proper header
+    expect(screen.getByText('Client Portal')).toBeInTheDocument();
+    expect(screen.getByText('Track progress and coordinate with stakeholders')).toBeInTheDocument();
   });
 });

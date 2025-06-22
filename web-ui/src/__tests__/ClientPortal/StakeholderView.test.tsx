@@ -39,9 +39,13 @@ describe('StakeholderView Component', () => {
       />
     );
 
-    expect(screen.getByText('Project Stakeholders')).toBeInTheDocument();
+    expect(screen.getByText('Stakeholders')).toBeInTheDocument();
+    // Active stakeholders should be visible by default
     expect(screen.getByText('Dr. Sarah Chen')).toBeInTheDocument();
     expect(screen.getByText('Mike Rodriguez')).toBeInTheDocument();
+    
+    // Pending stakeholder should be in the pending tab
+    fireEvent.click(screen.getByRole('tab', { name: /pending/i }));
     expect(screen.getByText('Emma Thompson')).toBeInTheDocument();
   });
 

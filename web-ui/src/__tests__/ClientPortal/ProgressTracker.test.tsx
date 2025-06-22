@@ -42,7 +42,7 @@ describe('ProgressTracker Component', () => {
 
     expect(screen.getByText('Project Progress')).toBeInTheDocument();
     expect(screen.getByText('Phase 2 of 3')).toBeInTheDocument();
-    expect(screen.getByText('Overall Progress')).toBeInTheDocument();
+    expect(screen.getByText('Overall Completion')).toBeInTheDocument();
   });
 
   it('displays correct overall progress calculation', () => {

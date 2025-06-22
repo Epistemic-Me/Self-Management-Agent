@@ -290,17 +290,19 @@ const mockMilestones = [
 export default function ClientPortalPage() {
   const [currentUserRole] = useState<'SME' | 'Developer' | 'Analyst'>('Developer');
   const [selectedTab, setSelectedTab] = useState('overview');
+  const [currentPhaseOverride, setCurrentPhaseOverride] = useState<number | null>(null);
 
   // Use API hooks
   const { data: projectData, isLoading: projectLoading, mutate: mutateProject } = useProjectProgress();
   const { data: stakeholders, isLoading: stakeholdersLoading, mutate: mutateStakeholders } = useStakeholders();
   const { data: phases, isLoading: phasesLoading } = usePhases();
 
-  const currentPhase = projectData?.currentPhase || 2;
+  const currentPhase = currentPhaseOverride || projectData?.currentPhase || 2;
 
   const handlePhaseSelect = (phaseId: number) => {
     logClientPortalActivity('phase_selected', { phaseId, previousPhase: currentPhase });
-    // In real implementation, this would update the server
+    // Update the current phase locally for demo purposes
+    setCurrentPhaseOverride(phaseId);
     console.log('Phase selected:', phaseId);
   };
 
@@ -352,70 +354,60 @@ export default function ClientPortalPage() {
   const displayPhases = phases || mockPhases;
   const displayStakeholders = stakeholders || mockStakeholders;
 
-  // Debug logging to verify data
-  console.log('Client Portal Data:', {
-    currentPhase,
-    phasesCount: displayPhases?.length,
-    projectData,
-    phases: phases?.length
-  });
-
   return (
-    <div className="flex flex-col h-full">
-      {/* Header with glassmorphism styling */}
-      <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Client Portal</h1>
-            <p className="text-slate-400">
-              Track progress and coordinate with stakeholders
-            </p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 px-3 py-1" data-testid="phase-badge">
-              <Calendar className="h-4 w-4 mr-2" />
-              <span>Phase {currentPhase} of 6 Active</span>
-            </Badge>
-            <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
-              <Settings className="h-4 w-4" />
-            </Button>
+    <div className="flex flex-col min-h-screen p-6">
+      {/* Page header integrated with content */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Client Portal</h1>
+          <p className="text-slate-400">
+            Track progress and coordinate with stakeholders
+          </p>
+        </div>
+        <div className="flex items-center space-x-3">
+          <Badge className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-4 py-2" data-testid="phase-badge">
+            <Calendar className="h-4 w-4 mr-2" />
+            <span>Phase {currentPhase} Active</span>
+          </Badge>
+          <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
+            <Bell className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
+            <Settings className="h-4 w-4" />
+          </Button>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg border-2 border-cyan-400/50">
+            <span className="text-white font-bold text-sm">DV</span>
           </div>
         </div>
       </div>
-
-      {/* Main content area */}
-      <div className="flex-1 overflow-auto p-6">
 
         {/* Main Content */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-8">
           <TabsList className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-1 grid w-full grid-cols-4">
             <TabsTrigger 
               value="overview" 
-              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all duration-300 rounded-lg"
             >
               <Rocket className="h-4 w-4" />
               <span>Overview</span>
             </TabsTrigger>
             <TabsTrigger 
               value="progress" 
-              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all duration-300 rounded-lg"
             >
               <BarChart3 className="h-4 w-4" />
               <span>Progress</span>
             </TabsTrigger>
             <TabsTrigger 
               value="stakeholders" 
-              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all duration-300 rounded-lg"
             >
               <Users className="h-4 w-4" />
               <span>Stakeholders</span>
             </TabsTrigger>
             <TabsTrigger 
               value="phases" 
-              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-500 data-[state=active]:text-white transition-all duration-300 rounded-lg"
+              className="flex items-center space-x-2 text-slate-300 data-[state=active]:bg-white/10 data-[state=active]:text-white transition-all duration-300 rounded-lg"
             >
               <Calendar className="h-4 w-4" />
               <span>Phases</span>
@@ -502,7 +494,6 @@ export default function ClientPortalPage() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
     </div>
   );
 }

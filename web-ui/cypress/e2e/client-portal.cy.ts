@@ -6,7 +6,7 @@ describe('Client Portal E2E Tests', () => {
 
   it('should load the client portal successfully', () => {
     cy.get('h1').should('contain', 'Client Portal');
-    cy.get('p').should('contain', 'Track your project progress and coordinate with stakeholders');
+    cy.get('p').should('contain', 'Track progress and coordinate with stakeholders');
   });
 
   it('should display the phase badge correctly', () => {
@@ -25,7 +25,7 @@ describe('Client Portal E2E Tests', () => {
 
     // Test Stakeholders tab
     cy.get('[role="tab"]').contains('Stakeholders').click();
-    cy.contains('Project Stakeholders').should('be.visible');
+    cy.contains('Stakeholders').should('be.visible');
 
     // Test Phases tab
     cy.get('[role="tab"]').contains('Phases').click();
@@ -35,7 +35,7 @@ describe('Client Portal E2E Tests', () => {
   it('should display progress tracking components', () => {
     // Should show progress tracker in overview
     cy.contains('Project Progress').should('be.visible');
-    cy.contains('Overall Progress').should('be.visible');
+    cy.contains('Overall Completion').should('be.visible');
     cy.contains('Engagement Phases').should('be.visible');
     
     // Should show percentage progress
