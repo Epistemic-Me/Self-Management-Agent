@@ -20,13 +20,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={inter.className}>
-        <div className="flex h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative">
+      <body className={`${inter.className} bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900`}>
+        <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative">
           {/* Global glassmorphism overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 backdrop-blur-3xl" />
+          <div className="fixed inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 backdrop-blur-3xl" />
           
           {/* Sidebar */}
-          <div className="w-64 border-r border-white/10 bg-white/5 backdrop-blur-sm relative z-10">
+          <div className="w-64 min-h-screen border-r border-white/10 bg-white/5 backdrop-blur-sm relative z-10">
             <div className="p-4 border-b border-white/10">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
@@ -56,28 +56,8 @@ export default function RootLayout({
           </div>
 
           {/* Main content */}
-          <div className="flex-1 flex flex-col relative z-10">
-            {/* Top bar */}
-            <div className="h-16 border-b border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-between px-6">
-              <div className="flex items-center space-x-4">
-                <div className="text-white font-medium">
-                  <span className="text-cyan-400 font-semibold">Build and evaluate</span> your AI agents with belief modeling
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-slate-400 text-sm hidden lg:block">
-                  Quantifying subjectivity in belief systems
-                </div>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg border-2 border-cyan-400/50">
-                  <span className="text-white font-bold text-sm">DV</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Page content */}
-            <div className="flex-1 overflow-hidden">
-              {children}
-            </div>
+          <div className="flex-1 relative z-10">
+            {children}
           </div>
         </div>
         <Toaster />

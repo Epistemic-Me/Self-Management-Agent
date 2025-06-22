@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { StakeholderView } from '@/components/ClientPortal/StakeholderView';
 
 const mockStakeholders = [
@@ -43,17 +44,31 @@ describe('StakeholderView Component', () => {
     // Active stakeholders should be visible by default
     expect(screen.getByText('Dr. Sarah Chen')).toBeInTheDocument();
     expect(screen.getByText('Mike Rodriguez')).toBeInTheDocument();
-    
-    // Pending stakeholder should be in the pending tab
-    fireEvent.click(screen.getByRole('tab', { name: /pending/i }));
-    expect(screen.getByText('Emma Thompson')).toBeInTheDocument();
   });
 
-  it('shows invite button for Developer role', () => {
+  it('shows pending stakeholder in pending tab', async () => {
+    const user = userEvent.setup();
     render(
       <StakeholderView 
         stakeholders={mockStakeholders}
         currentUserRole="Developer"
+      />
+    );
+    
+    // Pending stakeholder should be in the pending tab
+    await user.click(screen.getByRole('tab', { name: /pending/i }));
+    await waitFor(() => {
+      expect(screen.getByText('Emma Thompson')).toBeInTheDocument();
+    });
+  });
+
+  it('shows invite button for Developer role', () => {
+    const mockInvite = jest.fn();
+    render(
+      <StakeholderView 
+        stakeholders={mockStakeholders}
+        currentUserRole="Developer"
+        onInviteStakeholder={mockInvite}
       />
     );
 
@@ -99,18 +114,23 @@ describe('StakeholderView Component', () => {
     expect(mockInvite).toHaveBeenCalledTimes(1);
   });
 
-  it('shows approve button for pending stakeholders when user is Developer', () => {
+  it('shows approve button for pending stakeholders when user is Developer', async () => {
+    const user = userEvent.setup();
+    const mockUpdate = jest.fn();
     render(
       <StakeholderView 
         stakeholders={mockStakeholders}
         currentUserRole="Developer"
+        onUpdateStakeholder={mockUpdate}
       />
     );
 
     // Click on pending tab
-    fireEvent.click(screen.getByRole('tab', { name: /pending/i }));
+    await user.click(screen.getByRole('tab', { name: /pending/i }));
     
-    expect(screen.getByRole('button', { name: /approve/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /approve/i })).toBeInTheDocument();
+    });
   });
 
   it('displays role descriptions correctly', () => {
