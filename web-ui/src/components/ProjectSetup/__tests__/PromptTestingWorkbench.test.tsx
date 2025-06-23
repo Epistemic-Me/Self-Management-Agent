@@ -28,6 +28,7 @@ describe('PromptTestingWorkbench', () => {
     onSystemPromptChange: jest.fn(),
     onSave: jest.fn(),
     onContinueToEvaluation: jest.fn(),
+    sampleQueries: ['Hello, how are you?', 'What can you help me with?'],
   };
 
   beforeEach(() => {
@@ -185,5 +186,39 @@ describe('PromptTestingWorkbench', () => {
     });
     
     expect(mockProps.onContinueToEvaluation).toHaveBeenCalled();
+  });
+
+  it('displays and handles sample query clicks', () => {
+    render(<PromptTestingWorkbench {...mockProps} />);
+    
+    // Check that sample queries are displayed
+    expect(screen.getByText('Try these sample queries:')).toBeInTheDocument();
+    expect(screen.getByText('"Hello, how are you?"')).toBeInTheDocument();
+    expect(screen.getByText('"What can you help me with?"')).toBeInTheDocument();
+    
+    // Click on a sample query
+    const sampleQuery = screen.getByTestId('sample-query-0');
+    fireEvent.click(sampleQuery);
+    
+    // Check that the input field is populated
+    const testInput = screen.getByTestId('test-message-input') as HTMLInputElement;
+    expect(testInput.value).toBe('Hello, how are you?');
+  });
+
+  it('hides sample queries after sending a message', async () => {
+    render(<PromptTestingWorkbench {...mockProps} />);
+    
+    // Initially shows sample queries
+    expect(screen.getByText('Try these sample queries:')).toBeInTheDocument();
+    
+    // Send a message
+    const testInput = screen.getByTestId('test-message-input');
+    fireEvent.change(testInput, { target: { value: 'Test message' } });
+    
+    const sendButton = screen.getByTestId('send-test-message');
+    fireEvent.click(sendButton);
+    
+    // Sample queries should be hidden
+    expect(screen.queryByText('Try these sample queries:')).not.toBeInTheDocument();
   });
 });

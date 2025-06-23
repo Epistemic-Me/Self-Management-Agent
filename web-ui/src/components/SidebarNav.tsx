@@ -11,11 +11,6 @@ const navItems = [
     icon: Rocket,
   },
   {
-    title: 'Project Setup',
-    href: '/project-setup',
-    icon: FileText,
-  },
-  {
     title: 'Trace Collection',
     href: '/trace-collection',
     icon: Upload,

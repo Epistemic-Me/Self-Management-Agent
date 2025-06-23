@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import checklist, protocols, trend, chat, dialectic_db, simulation, user, dd_proxy, dd_data, project, trace, prompt
+from app.routers import checklist, protocols, trend, chat, dialectic_db, simulation, user, dd_proxy, dd_data, project, trace, prompt, prompt_test
 from fastapi_mcp import FastApiMCP
 from app.routers import selfmodel, belief, measurement, file
 from app.deps import lifespan, get_session
@@ -72,6 +72,7 @@ app.include_router(dd_data.router)
 app.include_router(project.router)
 app.include_router(trace.router, prefix="/api/traces")
 app.include_router(prompt.router)
+app.include_router(prompt_test.router)
 
 mcp = FastApiMCP(app)
 mcp.mount()

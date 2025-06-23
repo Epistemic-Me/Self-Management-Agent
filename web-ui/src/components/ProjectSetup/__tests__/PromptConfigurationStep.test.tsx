@@ -43,6 +43,11 @@ describe('PromptConfigurationStep', () => {
     expect(screen.getByText('Customer Support')).toBeInTheDocument();
     expect(screen.getByText('Code Reviewer')).toBeInTheDocument();
     expect(screen.getByText('Educational Tutor')).toBeInTheDocument();
+    
+    // Check that sample queries are displayed
+    expect(screen.getByText('"I\'m having trouble logging into my account"')).toBeInTheDocument();
+    expect(screen.getByText('"Please review this function for potential bugs"')).toBeInTheDocument();
+    expect(screen.getByText('"Can you explain how photosynthesis works?"')).toBeInTheDocument();
   });
 
   it('hides templates when system prompt has content', () => {
@@ -59,7 +64,7 @@ describe('PromptConfigurationStep', () => {
     fireEvent.click(customerSupportTemplate);
     
     expect(mockProps.onSystemPromptChange).toHaveBeenCalledWith(
-      expect.stringContaining('You are a professional customer support assistant')
+      expect.stringContaining('## Bot\'s Role & Objective')
     );
   });
 

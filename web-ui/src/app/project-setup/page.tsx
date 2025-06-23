@@ -10,6 +10,7 @@ import {
   saveProjectDraftLocal, 
   clearProjectDraftLocal 
 } from '@/lib/api/project-setup';
+import { saveProjectState } from '@/lib/project-state';
 import { useToast } from '@/components/ui/use-toast';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,14 +62,8 @@ export default function ProjectSetupPage() {
       // For demo purposes, simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const mockProject = {
-        id: 'proj-' + Date.now(),
-        name: data.projectInfo.name,
-        status: 'active' as const,
-        createdAt: new Date().toISOString(),
-        phases: [],
-        stakeholders: []
-      };
+      // Save project data to our state management system
+      saveProjectState(data);
 
       // Clear any saved draft data
       clearProjectDraftLocal();
@@ -78,7 +73,7 @@ export default function ProjectSetupPage() {
         description: `${data.projectInfo.name} is now ready to use.`,
       });
 
-      // Redirect to the new project or client portal
+      // Redirect to the client portal where the project will now be displayed
       router.push('/client-portal');
     } catch (error) {
       console.error('Error creating project:', error);

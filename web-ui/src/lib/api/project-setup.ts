@@ -182,9 +182,6 @@ export function validateProjectFormStep(step: number, data: Partial<ProjectFormD
       if (!data.projectInfo?.name?.trim()) {
         errors.push('Project name is required');
       }
-      if (!data.projectInfo?.type) {
-        errors.push('Project type is required');
-      }
       if (!data.projectInfo?.description?.trim()) {
         errors.push('Project description is required');
       }
