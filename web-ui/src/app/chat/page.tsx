@@ -3,20 +3,30 @@
 import { useState, useEffect } from 'react';
 import { MessageInput } from '@/components/MessageInput';
 import { ChatBubble } from '@/components/ChatBubble';
+import { PromptTestingDrawer } from '@/components/Chat/PromptTestingDrawer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bell, Settings, Calendar } from 'lucide-react';
+import { Bell, Settings, Calendar, Bot, Sliders } from 'lucide-react';
 import { startConversation, appendTurn, getConversation } from '@/lib/api';
+import { getProjectState, isProjectSetup } from '@/lib/project-state';
 import type { ConversationDetail, Turn } from '@/lib/api';
 
 export default function ChatPage() {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversation, setConversation] = useState<ConversationDetail | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [projectExists, setProjectExists] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
 
   useEffect(() => {
-    // Start a new conversation on mount
-    const initConversation = async () => {
+    // Check if project exists and start conversation
+    const initPage = async () => {
+      // Check project state
+      const exists = isProjectSetup();
+      setProjectExists(exists);
+
+      // Start a new conversation on mount
       try {
         const result = await startConversation();
         setConversationId(result.conversation_id);
@@ -25,7 +35,7 @@ export default function ChatPage() {
       }
     };
 
-    initConversation();
+    initPage();
   }, []);
 
   useEffect(() => {
@@ -54,19 +64,69 @@ export default function ChatPage() {
       // Add user message
       await appendTurn(conversationId, 'user', content);
       
-      // Simulate assistant response (placeholder)
-      const assistantResponse = `I understand you said: "${content}". This is a placeholder response. In a real implementation, this would be connected to your AI agent.`;
+      // If project exists, use the configured prompt for testing
+      let assistantResponse: string;
+      
+      if (projectExists) {
+        // Test with the actual configured prompt
+        const projectState = getProjectState();
+        const systemPrompt = projectState.projectData?.promptConfiguration?.systemPrompt;
+        
+        if (systemPrompt) {
+          try {
+            // Call our prompt testing API
+            const response = await fetch('/api/prompt-test/test', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                system_prompt: systemPrompt,
+                user_message: content,
+                conversation_history: conversation?.turns.map(turn => ({
+                  role: turn.role,
+                  content: turn.content
+                })) || []
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              assistantResponse = result.success ? result.response : `Error: ${result.error}`;
+            } else {
+              assistantResponse = `API Error: ${response.status}`;
+            }
+          } catch (error) {
+            console.error('Prompt testing failed:', error);
+            assistantResponse = 'Sorry, I encountered an error while processing your message.';
+          }
+        } else {
+          assistantResponse = 'No system prompt configured. Please set up your project first.';
+        }
+      } else {
+        // Fallback placeholder response
+        assistantResponse = `I understand you said: "${content}". This is a placeholder response. Please configure your project first to test with your custom AI prompt.`;
+      }
       
       // Add assistant message
       await appendTurn(conversationId, 'assistant', assistantResponse);
       
       // Reload conversation
       await loadConversation();
+      
+      // Clear the message input
+      setCurrentMessage('');
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleTestPrompt = (query: string) => {
+    // Close drawer and populate the input field
+    setIsDrawerOpen(false);
+    setCurrentMessage(query);
   };
 
   return (
@@ -84,6 +144,17 @@ export default function ChatPage() {
             <Calendar className="h-4 w-4 mr-2" />
             <span>Phase 2 Active</span>
           </Badge>
+          {projectExists && (
+            <Button 
+              variant="outline"
+              size="sm" 
+              onClick={() => setIsDrawerOpen(true)}
+              className="text-slate-300 hover:text-white border-slate-600 hover:border-cyan-500 hover:bg-cyan-500/10"
+            >
+              <Sliders className="h-4 w-4 mr-2" />
+              Test Prompt
+            </Button>
+          )}
           <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
             <Bell className="h-4 w-4" />
           </Button>
@@ -134,8 +205,20 @@ export default function ChatPage() {
       </div>
 
       <div className="mt-4">
-        <MessageInput onSend={handleSendMessage} disabled={isLoading} />
+        <MessageInput 
+          onSend={handleSendMessage} 
+          disabled={isLoading}
+          value={currentMessage}
+          onChange={setCurrentMessage}
+        />
       </div>
+
+      {/* Prompt Testing Drawer */}
+      <PromptTestingDrawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onTestPrompt={handleTestPrompt}
+      />
     </div>
   );
 } 

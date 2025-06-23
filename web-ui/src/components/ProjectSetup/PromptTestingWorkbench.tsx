@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,9 @@ interface PromptTestingWorkbenchProps {
   onSave?: () => void;
   onContinueToEvaluation?: () => void;
   className?: string;
+  sampleQueries?: string[];
+  selectedSampleQuery?: string;
+  onSampleQueryUsed?: () => void;
 }
 
 export function PromptTestingWorkbench({
@@ -27,13 +30,26 @@ export function PromptTestingWorkbench({
   onSystemPromptChange,
   onSave,
   onContinueToEvaluation,
-  className = ""
+  className = "",
+  sampleQueries = [],
+  selectedSampleQuery = "",
+  onSampleQueryUsed
 }: PromptTestingWorkbenchProps) {
   const [testMessages, setTestMessages] = useState<TestMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [promptDescription, setPromptDescription] = useState('');
   const { toast } = useToast();
+
+  // Handle selected sample query from template cards
+  useEffect(() => {
+    if (selectedSampleQuery) {
+      setCurrentMessage(selectedSampleQuery);
+      if (onSampleQueryUsed) {
+        onSampleQueryUsed();
+      }
+    }
+  }, [selectedSampleQuery, onSampleQueryUsed]);
 
   const handleSendMessage = useCallback(async () => {
     if (!currentMessage.trim() || !systemPrompt.trim()) {
@@ -53,37 +69,64 @@ export function PromptTestingWorkbench({
     };
 
     setTestMessages(prev => [...prev, userMessage]);
+    const messageToSend = currentMessage;
     setCurrentMessage('');
     setIsProcessing(true);
 
     try {
-      // Simulate AI response (in real implementation, this would call the AI API)
-      // For now, we'll create a simple response based on the system prompt
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-      
-      const assistantMessage: TestMessage = {
-        id: `assistant-${Date.now()}`,
-        content: `Based on the system prompt: "${systemPrompt.slice(0, 50)}...", I would respond to "${currentMessage}" accordingly. This is a simulated response for testing purposes.`,
-        role: 'assistant',
-        timestamp: new Date(),
-      };
+      // Prepare conversation history for API
+      const conversationHistory = testMessages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
 
-      setTestMessages(prev => [...prev, assistantMessage]);
-      
-      toast({
-        title: "Response Generated",
-        description: "Test message processed successfully",
+      // Call real OpenAI API
+      const response = await fetch('/api/prompt-test/test', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          system_prompt: systemPrompt,
+          user_message: messageToSend,
+          conversation_history: conversationHistory
+        }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+        throw new Error(errorData.detail || `API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        const assistantMessage: TestMessage = {
+          id: `assistant-${Date.now()}`,
+          content: result.response,
+          role: 'assistant',
+          timestamp: new Date(),
+        };
+
+        setTestMessages(prev => [...prev, assistantMessage]);
+        
+        toast({
+          title: "Response Generated",
+          description: "AI response received successfully",
+        });
+      } else {
+        throw new Error(result.error || 'Failed to generate response');
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to generate response",
+        description: error instanceof Error ? error.message : 'Failed to generate response',
         variant: "destructive",
       });
     } finally {
       setIsProcessing(false);
     }
-  }, [currentMessage, systemPrompt, toast]);
+  }, [currentMessage, systemPrompt, testMessages, toast]);
 
   const handleClearMessages = () => {
     setTestMessages([]);
@@ -91,6 +134,14 @@ export function PromptTestingWorkbench({
       title: "Messages Cleared",
       description: "Test conversation has been reset",
     });
+  };
+
+  const handleSampleQueryClick = (query: string, event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setCurrentMessage(query);
   };
 
   const handleSavePrompt = async () => {
@@ -258,15 +309,37 @@ export function PromptTestingWorkbench({
                     <Bot className="h-4 w-4" />
                     <span className="text-sm font-medium">Assistant</span>
                   </div>
-                  <div className="flex space-x-1 mt-2">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                    <span className="text-xs text-gray-400">Generating response...</span>
                   </div>
                 </div>
               </div>
             )}
           </div>
+
+          {/* Sample Queries */}
+          {sampleQueries.length > 0 && testMessages.length === 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-gray-300">Try these sample queries:</p>
+              <div className="flex flex-wrap gap-2">
+                {sampleQueries.map((query, index) => (
+                  <button
+                    key={index}
+                    onClick={(e) => handleSampleQueryClick(query, e)}
+                    className="px-3 py-1 text-sm bg-blue-600/20 text-blue-300 border border-blue-500/30 rounded-md hover:bg-blue-600/30 transition-colors"
+                    data-testid={`sample-query-${index}`}
+                  >
+                    "{query}"
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Message Input */}
           <div className="flex space-x-2">

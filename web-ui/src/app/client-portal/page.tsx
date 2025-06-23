@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ProgressTracker } from '@/components/ClientPortal/ProgressTracker';
 import { StakeholderView } from '@/components/ClientPortal/StakeholderView';
 import { PhaseNavigation } from '@/components/ClientPortal/PhaseNavigation';
 import { MilestoneCard } from '@/components/ClientPortal/MilestoneCard';
+import { ProjectSetupCTA } from '@/components/ClientPortal/ProjectSetupCTA';
+import { ProjectOverview } from '@/components/ClientPortal/ProjectOverview';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,6 +28,7 @@ import {
   inviteStakeholder,
   logClientPortalActivity
 } from '@/lib/api/client-portal';
+import { getProjectState, isProjectSetup } from '@/lib/project-state';
 
 // Mock data for demonstration - All 6 phases
 const mockPhases = [
@@ -291,8 +294,32 @@ export default function ClientPortalPage() {
   const [currentUserRole] = useState<'SME' | 'Developer' | 'Analyst'>('Developer');
   const [selectedTab, setSelectedTab] = useState('overview');
   const [currentPhaseOverride, setCurrentPhaseOverride] = useState<number | null>(null);
+  const [projectExists, setProjectExists] = useState<boolean>(false);
+  const [isCheckingProject, setIsCheckingProject] = useState<boolean>(true);
 
-  // Use API hooks
+  // Check project state on mount and when returning from setup
+  useEffect(() => {
+    const checkProjectState = () => {
+      setIsCheckingProject(true);
+      const exists = isProjectSetup();
+      setProjectExists(exists);
+      setIsCheckingProject(false);
+    };
+
+    checkProjectState();
+
+    // Listen for storage changes (when project is completed in another tab/component)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'epistemic_me_project') {
+        checkProjectState();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  // Use API hooks only if project exists
   const { data: projectData, isLoading: projectLoading, mutate: mutateProject } = useProjectProgress();
   const { data: stakeholders, isLoading: stakeholdersLoading, mutate: mutateStakeholders } = useStakeholders();
   const { data: phases, isLoading: phasesLoading } = usePhases();
@@ -338,13 +365,34 @@ export default function ClientPortalPage() {
 
   const activeMilestones = mockMilestones.filter(m => m.status === 'active');
 
-  // Loading state
-  if (projectLoading || stakeholdersLoading || phasesLoading) {
+  // Loading state for project check
+  if (isCheckingProject) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span>Loading client portal...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show project setup CTA if no project exists
+  if (!projectExists) {
+    return (
+      <div className="flex flex-col min-h-screen p-6">
+        <ProjectSetupCTA />
+      </div>
+    );
+  }
+
+  // Loading state for API data
+  if (projectLoading || stakeholdersLoading || phasesLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="flex items-center space-x-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading project data...</span>
         </div>
       </div>
     );
@@ -415,6 +463,9 @@ export default function ClientPortalPage() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-8">
+            {/* Project Overview - Show setup data */}
+            <ProjectOverview />
+            
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
                 {/* Progress Overview */}

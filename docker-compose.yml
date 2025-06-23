@@ -15,6 +15,7 @@ services:
       - DD_TOKEN=${DD_TOKEN}
       - DD_CLIENT_ID=${DD_CLIENT_ID}
       - DD_MCP_BASE_URL=http://dd-mcp:8090
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     depends_on:
       - postgres
       - minio

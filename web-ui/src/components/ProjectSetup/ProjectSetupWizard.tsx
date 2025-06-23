@@ -15,17 +15,10 @@ export interface ProjectFormData {
   projectInfo: {
     name: string;
     description: string;
-    type: 'analysis' | 'development' | 'research';
-    priority: 'low' | 'medium' | 'high';
   };
   timeline: {
     startDate: string;
     estimatedDuration: string;
-    milestones: Array<{
-      name: string;
-      dueDate: string;
-      description: string;
-    }>;
   };
   stakeholders: {
     projectManager: {
@@ -205,40 +198,19 @@ export function ProjectSetupWizard({ onComplete, onSave, initialData }: ProjectS
               {/* Step 1: Project Information */}
               {currentStep === 1 && (
                 <div className="space-y-4" data-testid="step-project-info">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Project Name *
-                      </label>
-                      <input
-                        {...register('projectInfo.name', { required: 'Project name is required' })}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Enter project name"
-                        data-testid="project-name"
-                      />
-                      {errors.projectInfo?.name && (
-                        <p className="text-red-400 text-sm mt-1">{errors.projectInfo.name?.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Project Type *
-                      </label>
-                      <select
-                        {...register('projectInfo.type', { required: 'Project type is required' })}
-                        className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        data-testid="project-type"
-                      >
-                        <option value="">Select type</option>
-                        <option value="analysis">Analysis</option>
-                        <option value="development">Development</option>
-                        <option value="research">Research</option>
-                      </select>
-                      {errors.projectInfo?.type && (
-                        <p className="text-red-400 text-sm mt-1">{typeof errors.projectInfo.type === 'object' ? errors.projectInfo.type?.message : errors.projectInfo.type}</p>
-                      )}
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Project Name *
+                    </label>
+                    <input
+                      {...register('projectInfo.name', { required: 'Project name is required' })}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter project name"
+                      data-testid="project-name"
+                    />
+                    {errors.projectInfo?.name && (
+                      <p className="text-red-400 text-sm mt-1">{errors.projectInfo.name?.message}</p>
+                    )}
                   </div>
 
                   <div>
@@ -257,27 +229,6 @@ export function ProjectSetupWizard({ onComplete, onSave, initialData }: ProjectS
                     )}
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Priority Level
-                    </label>
-                    <div className="flex space-x-4">
-                      {['low', 'medium', 'high'].map((priority) => (
-                        <label key={priority} className="flex items-center">
-                          <input
-                            type="radio"
-                            {...register('projectInfo.priority')}
-                            value={priority}
-                            className="mr-2"
-                            data-testid={`priority-${priority}`}
-                          />
-                          <Badge variant={priority === 'high' ? 'destructive' : priority === 'medium' ? 'default' : 'secondary'}>
-                            {priority.charAt(0).toUpperCase() + priority.slice(1)}
-                          </Badge>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               )}
 
@@ -294,6 +245,7 @@ export function ProjectSetupWizard({ onComplete, onSave, initialData }: ProjectS
                         {...register('timeline.startDate', { required: 'Start date is required' })}
                         className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         data-testid="start-date"
+                        defaultValue={new Date().toISOString().split('T')[0]}
                       />
                       {errors.timeline?.startDate && (
                         <p className="text-red-400 text-sm mt-1">{errors.timeline.startDate?.message}</p>
@@ -321,20 +273,6 @@ export function ProjectSetupWizard({ onComplete, onSave, initialData }: ProjectS
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Key Milestones
-                    </label>
-                    <p className="text-sm text-gray-400 mb-2">Add important project milestones (optional)</p>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      className="mb-2"
-                      data-testid="add-milestone"
-                    >
-                      Add Milestone
-                    </Button>
-                  </div>
                 </div>
               )}
 
