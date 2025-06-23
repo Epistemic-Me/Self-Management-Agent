@@ -287,3 +287,43 @@ class TraceFile(SQLModel, table=True):
     model_config = {
         "arbitrary_types_allowed": True
     }
+
+class PromptVersion(SQLModel, table=True):
+    """Table for storing prompt versions with testing history."""
+    __tablename__ = "prompt_version"
+    
+    id: uuid.UUID = Field(default_factory=uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id")
+    project_id: Optional[str] = None  # Links to project when project system is implemented
+    system_prompt: str
+    description: Optional[str] = None
+    version: str = Field(default="v1.0")
+    is_active: bool = Field(default=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Relationships
+    user: Optional[User] = Relationship()
+    test_sessions: List["PromptTestSession"] = Relationship(back_populates="prompt_version")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
+class PromptTestSession(SQLModel, table=True):
+    """Table for storing prompt test sessions and results."""
+    __tablename__ = "prompt_test_session"
+    
+    id: uuid.UUID = Field(default_factory=uuid4, primary_key=True)
+    prompt_version_id: uuid.UUID = Field(foreign_key="prompt_version.id")
+    test_messages: Optional[Any] = Field(default=None, sa_column=Column(SAJSON))  # Store test conversation
+    session_notes: Optional[str] = None
+    test_summary: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    # Relationships
+    prompt_version: Optional[PromptVersion] = Relationship(back_populates="test_sessions")
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
