@@ -31,12 +31,12 @@ class Timeline(BaseModel):
 
 class ProjectManager(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
-    email: str = Field(..., regex=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+    email: str = Field(..., pattern=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
 class TeamMember(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
-    email: str = Field(..., regex=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-    role: str = Field(..., regex="^(SME|Developer|Analyst)$")
+    email: str = Field(..., pattern=r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+    role: str = Field(..., pattern="^(SME|Developer|Analyst)$")
 
 class Stakeholders(BaseModel):
     projectManager: ProjectManager
@@ -53,7 +53,7 @@ class NotificationSettings(BaseModel):
     teams: bool = Field(default=False)
 
 class Integration(BaseModel):
-    githubRepo: Optional[str] = Field(default=None, regex=r'^https://github\.com/[\w\-._]+/[\w\-._]+$')
+    githubRepo: Optional[str] = Field(default=None, pattern=r'^https://github\.com/[\w\-._]+/[\w\-._]+$')
     apiEndpoints: List[str] = Field(default=[])
     notifications: NotificationSettings = Field(default_factory=NotificationSettings)
 

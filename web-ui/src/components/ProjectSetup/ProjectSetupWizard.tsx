@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/components/ui/use-toast';
 import { ChevronLeft, ChevronRight, Save, Check } from 'lucide-react';
+import { PromptConfigurationStep } from './PromptConfigurationStep';
 
 // Types for the wizard form data
 export interface ProjectFormData {
@@ -51,6 +52,11 @@ export interface ProjectFormData {
       teams: boolean;
     };
   };
+  promptConfiguration: {
+    systemPrompt: string;
+    description: string;
+    version: string;
+  };
 }
 
 interface ProjectSetupWizardProps {
@@ -82,6 +88,11 @@ const WIZARD_STEPS = [
   },
   {
     id: 5,
+    title: 'Prompt Configuration',
+    description: 'Define and test your AI assistant behavior'
+  },
+  {
+    id: 6,
     title: 'Integration Settings',
     description: 'GitHub integration and notifications'
   }
@@ -426,8 +437,26 @@ export function ProjectSetupWizard({ onComplete, onSave, initialData }: ProjectS
                 </div>
               )}
 
-              {/* Step 5: Integration Settings */}
+              {/* Step 5: Prompt Configuration */}
               {currentStep === 5 && (
+                <PromptConfigurationStep
+                  systemPrompt={watchedData.promptConfiguration?.systemPrompt || ''}
+                  onSystemPromptChange={(prompt) => {
+                    setValue('promptConfiguration.systemPrompt', prompt);
+                  }}
+                  onSave={() => onSave?.(watchedData)}
+                  onContinueToEvaluation={() => {
+                    // This will be implemented when we add evaluation functionality
+                    toast({
+                      title: "Ready for Evaluation",
+                      description: "Prompt configured! Evaluation features coming soon.",
+                    });
+                  }}
+                />
+              )}
+
+              {/* Step 6: Integration Settings */}
+              {currentStep === 6 && (
                 <div className="space-y-4" data-testid="step-integration">
                   <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
