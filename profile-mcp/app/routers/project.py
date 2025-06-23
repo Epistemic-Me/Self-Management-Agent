@@ -21,8 +21,8 @@ router = APIRouter(prefix="/api/projects", tags=["projects"])
 class ProjectInfo(BaseModel):
     name: str = Field(..., min_length=1, max_length=200)
     description: str = Field(..., min_length=1, max_length=1000)
-    type: str = Field(..., regex="^(analysis|development|research)$")
-    priority: str = Field(default="medium", regex="^(low|medium|high)$")
+    type: str = Field(..., pattern="^(analysis|development|research)$")
+    priority: str = Field(default="medium", pattern="^(low|medium|high)$")
 
 class Timeline(BaseModel):
     startDate: str

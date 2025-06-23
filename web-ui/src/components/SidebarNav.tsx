@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, BarChart3, Users, Rocket, FileText } from 'lucide-react';
+import { MessageCircle, BarChart3, Users, Rocket, FileText, Upload } from 'lucide-react';
 
 const navItems = [
   {
@@ -14,6 +14,11 @@ const navItems = [
     title: 'Project Setup',
     href: '/project-setup',
     icon: FileText,
+  },
+  {
+    title: 'Trace Collection',
+    href: '/trace-collection',
+    icon: Upload,
   },
   {
     title: 'Chat',

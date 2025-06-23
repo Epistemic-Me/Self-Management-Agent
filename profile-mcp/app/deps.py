@@ -34,15 +34,18 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:
         yield session
 
+# Alias for trace router compatibility
+get_async_session = get_session
+
+def get_async_session_factory():
+    """Get session factory for background tasks."""
+    return async_session
+
 @asynccontextmanager
 async def lifespan(app):
     # Wait for the database to be ready before starting the app
     await wait_for_db()
     yield
-
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session() as session:
-        yield session
 
 async def get_redis() -> Redis:
     return from_url(REDIS_URL, decode_responses=True)

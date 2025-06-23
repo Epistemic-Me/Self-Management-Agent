@@ -15,6 +15,7 @@ class User(SQLModel, table=True):
     self_models: List["SelfModel"] = Relationship(back_populates="user")
     measurements: List["Measurement"] = Relationship(back_populates="user")
     files: List["UserFile"] = Relationship(back_populates="user")
+    trace_files: List["TraceFile"] = Relationship()
     conversations: List["Conversation"] = Relationship()
     dialectics: List["Dialectic"] = Relationship()
 
@@ -262,3 +263,27 @@ class DDSyncLog(SQLModel, table=True):
     duration_ms: Optional[int] = Field(default=None)
     
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class TraceFile(SQLModel, table=True):
+    """Table for storing uploaded trace files with validation metadata."""
+    __tablename__ = "trace_file"
+    
+    id: uuid.UUID = Field(default_factory=uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id")
+    filename: str
+    s3_key: str
+    file_size: int
+    mime_type: str
+    quality_score: Optional[float] = None
+    validation_status: str = Field(default="pending")  # pending, processing, completed, failed
+    validation_errors: Optional[str] = None
+    trace_count: Optional[int] = None  # Number of traces found in file
+    uploaded_at: datetime = Field(default_factory=datetime.utcnow)
+    processed_at: Optional[datetime] = None
+    
+    # Relationships
+    user: Optional[User] = Relationship()
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }

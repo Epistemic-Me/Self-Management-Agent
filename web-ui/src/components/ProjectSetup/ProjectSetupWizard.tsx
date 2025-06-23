@@ -225,7 +225,7 @@ export function ProjectSetupWizard({ onComplete, onSave, initialData }: ProjectS
                         <option value="research">Research</option>
                       </select>
                       {errors.projectInfo?.type && (
-                        <p className="text-red-400 text-sm mt-1">{errors.projectInfo.type?.message}</p>
+                        <p className="text-red-400 text-sm mt-1">{typeof errors.projectInfo.type === 'object' ? errors.projectInfo.type?.message : errors.projectInfo.type}</p>
                       )}
                     </div>
                   </div>
