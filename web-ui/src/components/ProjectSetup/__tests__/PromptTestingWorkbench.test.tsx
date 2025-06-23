@@ -16,11 +16,7 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 // Mock the toast function
-jest.mock('@/components/ui/use-toast', () => ({
-  useToast: () => ({
-    toast: jest.fn(),
-  }),
-}));
+jest.mock('@/components/ui/use-toast');
 
 // Mock project state functions
 jest.mock('@/lib/project-state', () => ({
