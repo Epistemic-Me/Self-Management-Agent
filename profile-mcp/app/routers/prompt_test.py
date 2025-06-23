@@ -18,21 +18,19 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv(dotenv_path='../../.env')
 
-# Use mock service if no valid API key is available
+# Initialize real OpenAI service - no fallback to mock
 openai_api_key = os.getenv("OPENAI_API_KEY")
-if openai_api_key and openai_api_key.startswith("sk-") and len(openai_api_key) > 20:
-    try:
-        from app.services.openai_service import openai_service
-        ai_service = openai_service
-        logger.info("Using real OpenAI service")
-    except Exception as e:
-        logger.warning(f"Failed to load OpenAI service, using mock: {e}")
-        from app.services.mock_openai_service import mock_openai_service
-        ai_service = mock_openai_service
-else:
-    logger.info("No valid OpenAI API key found, using mock service")
-    from app.services.mock_openai_service import mock_openai_service
-    ai_service = mock_openai_service
+if not openai_api_key or not openai_api_key.startswith("sk-") or len(openai_api_key) <= 20:
+    logger.error("No valid OpenAI API key found. Please set OPENAI_API_KEY environment variable.")
+    raise ValueError("OPENAI_API_KEY is required for prompt testing functionality")
+
+try:
+    from app.services.openai_service import openai_service
+    ai_service = openai_service
+    logger.info("Successfully initialized OpenAI service")
+except Exception as e:
+    logger.error(f"Failed to initialize OpenAI service: {e}")
+    raise RuntimeError(f"OpenAI service initialization failed: {e}")
 
 router = APIRouter(prefix="/api/prompt-test", tags=["prompt-testing"])
 
