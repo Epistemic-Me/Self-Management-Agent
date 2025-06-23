@@ -40,14 +40,17 @@ export function ChatBubble({ role, content, timestamp }: ChatBubbleProps) {
           ) : (
             <ReactMarkdown 
               remarkPlugins={[remarkGfm]}
-              className="prose prose-sm max-w-none [&>*]:text-inherit"
               components={{
                 // Custom styling for markdown elements to match chat bubble theme
                 h1: ({children}) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
                 h2: ({children}) => <h2 className="text-base font-semibold mb-2">{children}</h2>,
                 h3: ({children}) => <h3 className="text-sm font-medium mb-1">{children}</h3>,
                 p: ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
-                code: ({children}) => <code className="bg-slate-800/50 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-600">{children}</code>,
+                code: ({children, inline}) => {
+                  return inline 
+                    ? <code className="bg-slate-800/50 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-600">{children}</code>
+                    : <code className="bg-slate-800/50 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-600">{children}</code>;
+                },
                 pre: ({children}) => <pre className="bg-slate-800/50 p-3 rounded-lg overflow-x-auto text-xs font-mono mb-2 border border-slate-600">{children}</pre>,
                 ul: ({children}) => <ul className="list-disc list-inside mb-2 space-y-1 pl-4">{children}</ul>,
                 ol: ({children}) => <ol className="list-decimal list-inside mb-2 space-y-1 pl-4">{children}</ol>,
