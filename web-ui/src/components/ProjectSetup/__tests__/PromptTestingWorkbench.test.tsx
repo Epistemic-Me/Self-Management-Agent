@@ -22,6 +22,13 @@ jest.mock('@/components/ui/use-toast', () => ({
   }),
 }));
 
+// Mock project state functions
+jest.mock('@/lib/project-state', () => ({
+  getProjectState: () => ({ isSetup: false }),
+  isProjectSetup: () => false,
+  getProjectSummary: () => null,
+}));
+
 describe('PromptTestingWorkbench', () => {
   const mockProps = {
     systemPrompt: 'You are a helpful assistant.',

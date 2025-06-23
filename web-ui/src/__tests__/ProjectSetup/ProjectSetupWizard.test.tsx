@@ -252,9 +252,8 @@ describe('ProjectSetupWizard', () => {
 
   // Helper function to fill steps and navigate
   async function fillStepsAndNavigate(user: any, targetStep: number) {
-    // Step 1
+    // Step 1 - Note: project-type was removed in our changes
     await user.type(screen.getByTestId('project-name'), 'Test Project');
-    await user.selectOptions(screen.getByTestId('project-type'), 'development');
     await user.type(screen.getByTestId('project-description'), 'Test description');
     if (targetStep === 1) return;
     

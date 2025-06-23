@@ -1,13 +1,19 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { PromptConfigurationStep } from '../PromptConfigurationStep';
-import { toast } from '@/components/ui/use-toast';
 
 // Mock the toast function
 jest.mock('@/components/ui/use-toast', () => ({
   useToast: () => ({
     toast: jest.fn(),
   }),
+}));
+
+// Mock project state functions
+jest.mock('@/lib/project-state', () => ({
+  getProjectState: () => ({ isSetup: false }),
+  isProjectSetup: () => false,
+  getProjectSummary: () => null,
 }));
 
 // Mock PromptTestingWorkbench
