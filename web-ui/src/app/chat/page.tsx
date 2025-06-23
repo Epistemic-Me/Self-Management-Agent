@@ -17,6 +17,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [projectExists, setProjectExists] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
 
   useEffect(() => {
     // Check if project exists and start conversation
@@ -112,6 +113,9 @@ export default function ChatPage() {
       
       // Reload conversation
       await loadConversation();
+      
+      // Clear the message input
+      setCurrentMessage('');
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
@@ -120,9 +124,9 @@ export default function ChatPage() {
   };
 
   const handleTestPrompt = (query: string) => {
-    // Close drawer and send the query
+    // Close drawer and populate the input field
     setIsDrawerOpen(false);
-    handleSendMessage(query);
+    setCurrentMessage(query);
   };
 
   return (
@@ -201,7 +205,12 @@ export default function ChatPage() {
       </div>
 
       <div className="mt-4">
-        <MessageInput onSend={handleSendMessage} disabled={isLoading} />
+        <MessageInput 
+          onSend={handleSendMessage} 
+          disabled={isLoading}
+          value={currentMessage}
+          onChange={setCurrentMessage}
+        />
       </div>
 
       {/* Prompt Testing Drawer */}

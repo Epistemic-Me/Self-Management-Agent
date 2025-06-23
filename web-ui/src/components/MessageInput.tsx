@@ -8,16 +8,22 @@ import { Send } from 'lucide-react';
 interface MessageInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
-  const [message, setMessage] = useState('');
+export function MessageInput({ onSend, disabled = false, value, onChange }: MessageInputProps) {
+  const [internalMessage, setInternalMessage] = useState('');
+  
+  // Use controlled value if provided, otherwise use internal state
+  const currentMessage = value !== undefined ? value : internalMessage;
+  const setCurrentMessage = onChange || setInternalMessage;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && !disabled) {
-      onSend(message.trim());
-      setMessage('');
+    if (currentMessage.trim() && !disabled) {
+      onSend(currentMessage.trim());
+      setCurrentMessage('');
     }
   };
 
@@ -31,8 +37,8 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
       <Textarea
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        value={currentMessage}
+        onChange={(e) => setCurrentMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Type your message..."
         disabled={disabled}
@@ -40,7 +46,7 @@ export function MessageInput({ onSend, disabled = false }: MessageInputProps) {
       />
       <Button 
         type="submit" 
-        disabled={disabled || !message.trim()}
+        disabled={disabled || !currentMessage.trim()}
         size="icon"
         className="h-[60px] w-[60px]"
       >
