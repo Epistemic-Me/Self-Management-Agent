@@ -11,9 +11,8 @@ from uuid import UUID
 import uuid
 from datetime import datetime
 
-from ..database import get_session
-from ..models import PromptVersion, PromptTestSession, User
-from ..auth import get_current_user
+from app.deps import get_session
+from app.models import PromptVersion, PromptTestSession, User
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/prompts", tags=["prompts"])
@@ -58,7 +57,9 @@ class PromptTestSessionResponse(BaseModel):
 async def create_prompt_version(
     prompt_data: PromptVersionCreate,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    # TODO: Add authentication when available
+    # For now, create a mock user for testing
+    user_id: UUID = uuid.uuid4()
 ) -> PromptVersionResponse:
     """Create a new prompt version."""
     
@@ -66,7 +67,7 @@ async def create_prompt_version(
     if prompt_data.project_id:
         existing_prompts = session.exec(
             select(PromptVersion).where(
-                PromptVersion.user_id == current_user.id,
+                PromptVersion.user_id == user_id,
                 PromptVersion.project_id == prompt_data.project_id,
                 PromptVersion.is_active == True
             )
@@ -78,7 +79,7 @@ async def create_prompt_version(
     
     # Create new prompt version
     prompt_version = PromptVersion(
-        user_id=current_user.id,
+        user_id=user_id,
         system_prompt=prompt_data.system_prompt,
         description=prompt_data.description,
         version=prompt_data.version,
@@ -107,11 +108,13 @@ async def list_prompt_versions(
     project_id: Optional[str] = None,
     active_only: bool = False,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    # TODO: Add authentication when available
+    # For now, create a mock user for testing
+    user_id: UUID = uuid.uuid4()
 ) -> List[PromptVersionResponse]:
     """List prompt versions for the current user."""
     
-    query = select(PromptVersion).where(PromptVersion.user_id == current_user.id)
+    query = select(PromptVersion).where(PromptVersion.user_id == user_id)
     
     if project_id:
         query = query.where(PromptVersion.project_id == project_id)
@@ -150,12 +153,14 @@ async def list_prompt_versions(
 async def get_prompt_version(
     prompt_id: UUID,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    # TODO: Add authentication when available
+    # For now, create a mock user for testing
+    user_id: UUID = uuid.uuid4()
 ) -> PromptVersionResponse:
     """Get a specific prompt version."""
     
     prompt_version = session.get(PromptVersion, prompt_id)
-    if not prompt_version or prompt_version.user_id != current_user.id:
+    if not prompt_version or prompt_version.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Prompt version not found"
@@ -184,12 +189,14 @@ async def update_prompt_version(
     prompt_id: UUID,
     prompt_update: PromptVersionUpdate,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    # TODO: Add authentication when available
+    # For now, create a mock user for testing
+    user_id: UUID = uuid.uuid4()
 ) -> PromptVersionResponse:
     """Update a prompt version."""
     
     prompt_version = session.get(PromptVersion, prompt_id)
-    if not prompt_version or prompt_version.user_id != current_user.id:
+    if not prompt_version or prompt_version.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Prompt version not found"
@@ -207,7 +214,7 @@ async def update_prompt_version(
         if prompt_update.is_active and prompt_version.project_id:
             other_prompts = session.exec(
                 select(PromptVersion).where(
-                    PromptVersion.user_id == current_user.id,
+                    PromptVersion.user_id == user_id,
                     PromptVersion.project_id == prompt_version.project_id,
                     PromptVersion.id != prompt_id,
                     PromptVersion.is_active == True
@@ -246,13 +253,15 @@ async def create_test_session(
     prompt_id: UUID,
     session_data: PromptTestSessionCreate,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    # TODO: Add authentication when available
+    # For now, create a mock user for testing
+    user_id: UUID = uuid.uuid4()
 ) -> PromptTestSessionResponse:
     """Create a test session for a prompt version."""
     
     # Verify prompt exists and belongs to user
     prompt_version = session.get(PromptVersion, prompt_id)
-    if not prompt_version or prompt_version.user_id != current_user.id:
+    if not prompt_version or prompt_version.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Prompt version not found"
@@ -283,13 +292,15 @@ async def create_test_session(
 async def list_test_sessions(
     prompt_id: UUID,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    # TODO: Add authentication when available
+    # For now, create a mock user for testing
+    user_id: UUID = uuid.uuid4()
 ) -> List[PromptTestSessionResponse]:
     """List test sessions for a prompt version."""
     
     # Verify prompt exists and belongs to user
     prompt_version = session.get(PromptVersion, prompt_id)
-    if not prompt_version or prompt_version.user_id != current_user.id:
+    if not prompt_version or prompt_version.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Prompt version not found"
@@ -317,12 +328,14 @@ async def list_test_sessions(
 async def delete_prompt_version(
     prompt_id: UUID,
     session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    # TODO: Add authentication when available
+    # For now, create a mock user for testing
+    user_id: UUID = uuid.uuid4()
 ):
     """Delete a prompt version and its test sessions."""
     
     prompt_version = session.get(PromptVersion, prompt_id)
-    if not prompt_version or prompt_version.user_id != current_user.id:
+    if not prompt_version or prompt_version.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Prompt version not found"
