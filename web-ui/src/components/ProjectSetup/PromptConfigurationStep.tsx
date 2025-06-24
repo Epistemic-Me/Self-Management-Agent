@@ -2,11 +2,9 @@
 
 import React, { useState } from 'react';
 import { PromptTestingWorkbench } from './PromptTestingWorkbench';
-import { OpenCodingInterface } from '../OpenCoding/OpenCodingInterface';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Brain, Lightbulb, MessageSquare, FileText } from 'lucide-react';
+import { Brain, Lightbulb, MessageSquare } from 'lucide-react';
 
 interface PromptConfigurationStepProps {
   systemPrompt: string;
@@ -266,7 +264,6 @@ export function PromptConfigurationStep({
 }: PromptConfigurationStepProps) {
   
   const [selectedSampleQuery, setSelectedSampleQuery] = useState<string>('');
-  const [showOpenCoding, setShowOpenCoding] = useState<boolean>(false);
   
   const handleTemplateSelect = (template: TemplateType) => {
     onSystemPromptChange(template.prompt);
@@ -294,32 +291,6 @@ export function PromptConfigurationStep({
     { id: 'query_3', text: 'Can you provide more details about this topic?' }
   ];
 
-  if (showOpenCoding) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-white">Open Coding Analysis</h2>
-          <Button
-            variant="outline"
-            onClick={() => setShowOpenCoding(false)}
-            className="border-white/20 text-slate-300 hover:text-white hover:bg-white/10"
-          >
-            Back to Prompt Configuration
-          </Button>
-        </div>
-        
-        <OpenCodingInterface
-          projectId="prompt-eval-project"
-          systemPrompt={systemPrompt}
-          sampleQueries={sampleQueries}
-          onComplete={() => {
-            setShowOpenCoding(false);
-            onContinueToEvaluation?.();
-          }}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6" data-testid="step-prompt-configuration">
@@ -399,28 +370,6 @@ export function PromptConfigurationStep({
         onSampleQueryUsed={() => setSelectedSampleQuery('')}
       />
 
-      {/* Open Coding Access */}
-      {systemPrompt.trim() && (
-        <Card className="p-6 bg-emerald-900/20 border-emerald-500/30">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <FileText className="h-5 w-5 text-emerald-400" />
-              <h3 className="text-lg font-semibold text-emerald-300">Open Coding Analysis</h3>
-            </div>
-            <p className="text-emerald-200 text-sm">
-              Perform systematic qualitative analysis of your prompt across multiple test queries. 
-              Review AI responses, identify failure modes, and export data for further analysis.
-            </p>
-            <Button
-              onClick={() => setShowOpenCoding(true)}
-              className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Start Open Coding Analysis
-            </Button>
-          </div>
-        </Card>
-      )}
 
       {/* Guidelines */}
       <Card className="p-6 bg-blue-900/20 border-blue-500/30">

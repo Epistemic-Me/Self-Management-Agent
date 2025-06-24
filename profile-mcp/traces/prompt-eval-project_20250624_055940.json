@@ -1,0 +1,23 @@
+[
+  {
+    "id": "prompt-eval-project_20250624_055940_query_0",
+    "query": "I'm having trouble logging into my account",
+    "response": "It seems you're experiencing an issue with logging into your account. While I can't directly assist with account access, I can provide some general troubleshooting steps that might help resolve your login problem:\n\n1. **Check Your Credentials**: Ensure that you are entering the correct username and password. Pay attention to case sensitivity.\n\n2. **Password Reset**: If you can't remember your password, look for a \"Forgot Password?\" link on the login page. This usually allows you to reset your password via your registered email.\n\n3. **Browser Issues**: Clear your browser's cache and cookies, or try logging in using a different browser or incognito mode to rule out any browser-related issues.\n\n4. **Account Lockout**: If you've attempted to log in multiple times unsuccessfully, your account may be temporarily locked. Wait a few minutes and try again.\n\n5. **Two-Factor Authentication (2FA)**: If you have 2FA enabled, make sure you are entering the correct verification code sent to your device.\n\n6. **Check for Service Outages**: Sometimes, the service may be down. Check the service's status page or their social media for any announcements regarding outages.\n\n7. **Contact Support**: If none of the above solutions work, reach out to the customer support team of the service for further assistance.\n\nIf you have code you'd like me to review that pertains to your login functionality, please share it, and I can help identify potential issues or suggest improvements!",
+    "timestamp": "2025-06-24T05:59:46.846886",
+    "project_id": "prompt-eval-project"
+  },
+  {
+    "id": "prompt-eval-project_20250624_055940_query_1",
+    "query": "Can you help me process a refund?",
+    "response": "It seems like you're looking for help with processing a refund. However, I specialize in code reviews and software development best practices. If you have a specific piece of code related to refund processing that you would like me to review or improve, please share it, and I'll be happy to assist!",
+    "timestamp": "2025-06-24T05:59:49.222174",
+    "project_id": "prompt-eval-project"
+  },
+  {
+    "id": "prompt-eval-project_20250624_055940_query_2",
+    "query": "What's your return policy?",
+    "response": "I'm here to assist with code reviews and software engineering guidance rather than handling returns or policies. If you have a piece of code you'd like me to review, please share it, and I'll provide detailed feedback on its quality, security, and performance.",
+    "timestamp": "2025-06-24T05:59:50.707093",
+    "project_id": "prompt-eval-project"
+  }
+]

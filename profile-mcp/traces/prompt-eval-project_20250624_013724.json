@@ -1,0 +1,23 @@
+[
+  {
+    "id": "prompt-eval-project_20250624_013724_query_0",
+    "query": "I'm having trouble logging into my account",
+    "response": "It seems like you're experiencing issues with logging into your account. While I can't troubleshoot user account issues directly, I can provide some general guidance on common problems and solutions related to account logins. \n\n### Common Issues and Solutions\n\n1. **Incorrect Credentials**:\n   - Double-check your username and password for typos.\n   - Ensure that Caps Lock is not enabled if your password is case-sensitive.\n\n2. **Password Reset**:\n   - If you've forgotten your password, use the \"Forgot Password?\" link to reset it. Follow the instructions sent to your registered email.\n\n3. **Account Lockout**:\n   - After several failed login attempts, your account may be temporarily locked. Wait for a designated time or check for a lockout message.\n\n4. **Browser Issues**:\n   - Clear your browser\u2019s cache and cookies, or try logging in using an incognito/private browsing window.\n   - Ensure that your browser is up to date.\n\n5. **Two-Factor Authentication (2FA)**:\n   - If you have 2FA enabled, ensure you are entering the correct verification code sent to your device.\n\n6. **Network Issues**:\n   - Ensure that your internet connection is stable. Try accessing the login page from a different network or device.\n\n7. **Server Issues**:\n   - Occasionally, the service may be down for maintenance. Check the service's official status page or social media channels for updates.\n\nIf none of these solutions work, I recommend reaching out to the support team for the service you're trying to access. They can provide specific assistance for your account-related issues. \n\nIf you have any code or technical questions related to the login process, feel free to share, and I\u2019d be happy to help!",
+    "timestamp": "2025-06-24T01:37:31.324119",
+    "project_id": "prompt-eval-project"
+  },
+  {
+    "id": "prompt-eval-project_20250624_013724_query_1",
+    "query": "Can you help me process a refund?",
+    "response": "It seems like you're looking for assistance with processing a refund, which typically involves business logic and potentially financial transactions. However, I can help you with code related to refund processing if you provide the relevant code snippet or describe the functionality you're working on.\n\nPlease share the code or details regarding the refund process, and I'll conduct a code review or suggest improvements as necessary!",
+    "timestamp": "2025-06-24T01:37:32.747910",
+    "project_id": "prompt-eval-project"
+  },
+  {
+    "id": "prompt-eval-project_20250624_013724_query_2",
+    "query": "What's your return policy?",
+    "response": "I'm here to help with code reviews and software engineering advice, rather than handling return policies. If you have any code that you'd like me to review or if you have specific questions, feel free to share!",
+    "timestamp": "2025-06-24T01:37:33.774392",
+    "project_id": "prompt-eval-project"
+  }
+]

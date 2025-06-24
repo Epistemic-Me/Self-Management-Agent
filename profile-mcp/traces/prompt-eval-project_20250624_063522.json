@@ -1,0 +1,23 @@
+[
+  {
+    "id": "prompt-eval-project_20250624_063522_query_0",
+    "query": "I'm having trouble logging into my account",
+    "response": "It seems you're facing a login issue with your account. While I can't assist with account-specific problems, I can help you troubleshoot common login issues or provide guidance on how login functionality can be improved in code.\n\nHere\u2019s a general approach to troubleshooting a login issue:\n\n1. **Check Credentials**: Ensure you are entering the correct username and password. Double-check for any typos or case sensitivity.\n\n2. **Password Recovery**: If you can't remember your password, look for a \"Forgot Password?\" link to reset your password.\n\n3. **Account Lockout**: After multiple failed login attempts, some systems temporarily lock accounts. If you suspect this is the case, wait a few minutes or contact support.\n\n4. **Browser Issues**: Clear your browser's cache and cookies, or try a different browser or device.\n\n5. **Network Issues**: Ensure you have a stable internet connection.\n\n6. **Check for Errors**: If there\u2019s an error message, note it down. It might provide hints about what's wrong.\n\nIf you\u2019re looking for help with the code that handles the login functionality, feel free to share it, and I can provide a review and suggestions for improvement!",
+    "timestamp": "2025-06-24T06:35:27.611616",
+    "project_id": "prompt-eval-project"
+  },
+  {
+    "id": "prompt-eval-project_20250624_063522_query_1",
+    "query": "Can you help me process a refund?",
+    "response": "It seems like you're looking for assistance with processing a refund, but I specialize in code reviews and software engineering. If you have a specific piece of code related to refund processing that you'd like me to review, please share it, and I can help identify any issues or improvements!",
+    "timestamp": "2025-06-24T06:35:28.827575",
+    "project_id": "prompt-eval-project"
+  },
+  {
+    "id": "prompt-eval-project_20250624_063522_query_2",
+    "query": "What's your return policy?",
+    "response": "I'm here to help with code reviews and software engineering questions, rather than handling return policies. If you have any code or technical queries, feel free to share, and I'll be glad to assist you!",
+    "timestamp": "2025-06-24T06:35:30.069965",
+    "project_id": "prompt-eval-project"
+  }
+]
