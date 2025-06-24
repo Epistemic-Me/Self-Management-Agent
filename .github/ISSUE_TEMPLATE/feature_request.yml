@@ -1,0 +1,92 @@
+name: Feature Request
+description: Create a feature request following project constraints
+title: "[FEATURE] "
+labels: ["type:feature", "enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request! Please follow the project constraints.
+
+  - type: input
+    id: parent_issue
+    attributes:
+      label: Parent Issue
+      description: Reference the parent epic (e.g., "#8 (Epic 2.1 - Open Coding Application)")
+      placeholder: "#XX (Epic X.X - Epic Name)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Issue Type
+      description: Select the type of issue
+      options:
+        - Feature
+        - Bug
+        - Epic
+      default: 0
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Clear description of the problem this feature solves
+      placeholder: Describe the problem...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution
+      description: Detailed description of the proposed solution
+      placeholder: Describe your solution...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Specific, testable requirements (use ✅ sections)
+      placeholder: |
+        ### ✅ Category 1
+        - [ ] Specific requirement
+        - [ ] Another requirement
+        
+        ### ✅ Category 2
+        - [ ] Specific requirement
+    validations:
+      required: true
+
+  - type: textarea
+    id: external_resources
+    attributes:
+      label: External Resources Required
+      description: Resources that developer must manage outside of Claude Code
+      placeholder: |
+        - **Resource 1**: Description
+        - **Resource 2**: Description
+    validations:
+      required: true
+
+  - type: textarea
+    id: review_checklist
+    attributes:
+      label: Review Checklist
+      description: Acceptable vs Unacceptable states for each implementation area
+      placeholder: |
+        ### Implementation Area 1
+        - **Acceptable**: Clear definition
+        - **Unacceptable**: Clear definition
+        
+        ### Implementation Area 2
+        - **Acceptable**: Clear definition
+        - **Unacceptable**: Clear definition
+    validations:
+      required: true
