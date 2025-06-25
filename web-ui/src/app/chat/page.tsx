@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react';
 import { MessageInput } from '@/components/MessageInput';
 import { ChatBubble } from '@/components/ChatBubble';
 import { PromptTestingDrawer } from '@/components/Chat/PromptTestingDrawer';
+import { PromptConfigurationStep } from '@/components/ProjectSetup/PromptConfigurationStep';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bell, Settings, Calendar, Bot, Sliders } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Bell, Settings, Calendar, Bot, Sliders, MessageSquare, Wrench } from 'lucide-react';
 import { startConversation, appendTurn, getConversation } from '@/lib/api';
-import { getProjectState, isProjectSetup } from '@/lib/project-state';
+import { getProjectState, isProjectSetup, updateProjectState } from '@/lib/project-state';
 import type { ConversationDetail, Turn } from '@/lib/api';
 
 export default function ChatPage() {
@@ -18,6 +21,8 @@ export default function ChatPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [projectExists, setProjectExists] = useState(false);
   const [currentMessage, setCurrentMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('chat');
+  const [systemPrompt, setSystemPrompt] = useState('');
 
   useEffect(() => {
     // Check if project exists and start conversation
@@ -25,6 +30,13 @@ export default function ChatPage() {
       // Check project state
       const exists = isProjectSetup();
       setProjectExists(exists);
+
+      // Load system prompt from project state
+      if (exists) {
+        const projectState = getProjectState();
+        const prompt = projectState.projectData?.promptConfiguration?.systemPrompt || '';
+        setSystemPrompt(prompt);
+      }
 
       // Start a new conversation on mount
       try {
@@ -129,14 +141,37 @@ export default function ChatPage() {
     setCurrentMessage(query);
   };
 
+  const handleSavePrompt = () => {
+    // Save prompt to project state
+    const projectState = getProjectState();
+    const updatedState = {
+      ...projectState,
+      projectData: {
+        ...projectState.projectData,
+        promptConfiguration: {
+          systemPrompt,
+          description: 'User configured prompt',
+          version: '1.0'
+        }
+      }
+    };
+    updateProjectState(updatedState);
+  };
+
+  const handleSystemPromptChange = (prompt: string) => {
+    setSystemPrompt(prompt);
+    // Auto-save after a short delay
+    setTimeout(() => handleSavePrompt(), 1000);
+  };
+
   return (
     <div className="flex flex-col min-h-screen p-6">
       {/* Page header integrated with content */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Chat Interface</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Chat & Prompt Management</h1>
           <p className="text-slate-400">
-            Conversational AI with <span className="text-cyan-400">belief modeling</span> and personalization
+            Configure your AI assistant and <span className="text-cyan-400">test prompts</span> in real-time
           </p>
         </div>
         <div className="flex items-center space-x-3">
@@ -167,7 +202,21 @@ export default function ChatPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
+      {/* Tabs for Chat and Prompt Configuration */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+        <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
+          <TabsTrigger value="chat" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Chat
+          </TabsTrigger>
+          <TabsTrigger value="prompt" className="flex items-center gap-2">
+            <Wrench className="h-4 w-4" />
+            Prompt Configuration
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="chat" className="flex-1 flex flex-col mt-4">
+          <div className="flex-1 overflow-y-auto space-y-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
         {conversation?.turns.map((turn: Turn) => (
           <ChatBubble
             key={turn.id}
@@ -202,16 +251,33 @@ export default function ChatPage() {
             </div>
           </div>
         )}
-      </div>
+          </div>
 
-      <div className="mt-4">
-        <MessageInput 
-          onSend={handleSendMessage} 
-          disabled={isLoading}
-          value={currentMessage}
-          onChange={setCurrentMessage}
-        />
-      </div>
+          <div className="mt-4">
+            <MessageInput 
+              onSend={handleSendMessage} 
+              disabled={isLoading}
+              value={currentMessage}
+              onChange={setCurrentMessage}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="prompt" className="flex-1 mt-4">
+          <Card className="h-full">
+            <div className="p-6">
+              <PromptConfigurationStep
+                systemPrompt={systemPrompt}
+                onSystemPromptChange={handleSystemPromptChange}
+                onSave={handleSavePrompt}
+                onContinueToEvaluation={() => {
+                  // Navigate to evaluation page when this is implemented
+                }}
+              />
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Prompt Testing Drawer */}
       <PromptTestingDrawer

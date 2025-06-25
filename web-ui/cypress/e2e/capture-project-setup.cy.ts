@@ -1,6 +1,9 @@
 describe('Project Setup Wizard - Screenshot Capture', () => {
   it('captures screenshots of wizard steps', () => {
-    cy.visit('/project-setup');
+    // Navigate to project setup via client portal
+    cy.visit('/client-portal');
+    cy.contains('Start Project Setup').click();
+    cy.url().should('include', '/project-setup');
     
     // Step 1: Project Information
     cy.contains('Project Setup Wizard').should('be.visible');

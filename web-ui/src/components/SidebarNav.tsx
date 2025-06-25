@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, BarChart3, Users, Rocket, FileText, Upload } from 'lucide-react';
+import { MessageCircle, BarChart3, Users, Rocket, FileText, Upload, Database } from 'lucide-react';
 
 const navItems = [
   {
@@ -19,6 +19,11 @@ const navItems = [
     title: 'Chat',
     href: '/chat',
     icon: MessageCircle,
+  },
+  {
+    title: 'Datasets',
+    href: '/datasets',
+    icon: Database,
   },
   {
     title: 'Evaluation',

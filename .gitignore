@@ -170,8 +170,10 @@ test_*.py
 # Tools directory (appears to be temporary)
 tools/
 
-# Documentation directory (if temporary)
-docs/
+# Documentation directory (temporary files only)
+docs/archive/
+docs/_build/
+docs/temp/
 
 # Test fixtures (if generated)
 **/cypress/fixtures/

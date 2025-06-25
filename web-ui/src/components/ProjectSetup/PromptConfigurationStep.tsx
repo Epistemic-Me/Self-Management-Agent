@@ -281,6 +281,17 @@ export function PromptConfigurationStep({
     systemPrompt.includes(template.prompt.split('\n')[0])
   );
 
+  // Generate sample queries for open coding
+  const sampleQueries = selectedTemplate?.sampleQueries?.map((query, index) => ({
+    id: `query_${index}`,
+    text: query
+  })) || [
+    { id: 'query_1', text: 'Help me understand how this feature works' },
+    { id: 'query_2', text: 'What should I do if I encounter an error?' },
+    { id: 'query_3', text: 'Can you provide more details about this topic?' }
+  ];
+
+
   return (
     <div className="space-y-6" data-testid="step-prompt-configuration">
       {/* Header */}
@@ -358,6 +369,7 @@ export function PromptConfigurationStep({
         selectedSampleQuery={selectedSampleQuery}
         onSampleQueryUsed={() => setSelectedSampleQuery('')}
       />
+
 
       {/* Guidelines */}
       <Card className="p-6 bg-blue-900/20 border-blue-500/30">
