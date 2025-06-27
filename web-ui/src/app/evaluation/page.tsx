@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { ConversationList } from '@/components/ConversationList';
 import { ConversationDetail } from '@/components/ConversationDetail';
 import { OpenCodingInterface } from '@/components/OpenCoding/OpenCodingInterface';
+import { PromptIterationWorkspace } from '@/components/PromptIteration/PromptIterationWorkspace';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bell, Settings, Calendar, MessageSquare, FileText, Database } from 'lucide-react';
+import { Bell, Settings, Calendar, MessageSquare, FileText, Database, Zap } from 'lucide-react';
 import type { Conversation } from '@/lib/api';
 
 // Dataset selector component
@@ -190,10 +191,147 @@ function DatasetSelector({ selectedDataset, onSelectDataset }: DatasetSelectorPr
   );
 }
 
+// Prompt Iteration Dataset Selector
+interface PromptIterationDatasetSelectorProps {
+  onSelectDataset: (dataset: Dataset) => void;
+}
+
+function PromptIterationDatasetSelector({ onSelectDataset }: PromptIterationDatasetSelectorProps) {
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // TODO: Load datasets from API
+    setTimeout(() => {
+      setDatasets([
+        {
+          id: 'dataset_1',
+          name: 'Customer Support Evaluation',
+          description: 'Dataset for testing customer support prompt responses',
+          query_count: 15,
+          system_prompt: 'You are a helpful customer support assistant. Always be polite, professional, and provide clear, actionable solutions to customer problems. If you cannot resolve an issue, escalate it appropriately.',
+          sample_queries: [
+            { id: 'q1', text: "I'm having trouble logging into my account" },
+            { id: 'q2', text: "Can you help me process a refund?" },
+            { id: 'q3', text: "What's your return policy?" }
+          ]
+        },
+        {
+          id: 'dataset_2',
+          name: 'Code Review Assistant', 
+          description: 'Dataset for evaluating code review and improvement suggestions',
+          query_count: 8,
+          system_prompt: 'You are an experienced senior software engineer who provides constructive code reviews. Focus on code quality, security, performance, and maintainability. Provide specific, actionable feedback.',
+          sample_queries: [
+            { id: 'q4', text: "Please review this function for potential bugs" },
+            { id: 'q5', text: "How can I improve the performance of this code?" }
+          ]
+        }
+      ]);
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
+  const handleStartIteration = (dataset: Dataset) => {
+    onSelectDataset(dataset);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-white">Select Dataset for Prompt Iteration</h2>
+          <p className="text-slate-400">Choose a dataset to perform rapid prompt iteration and improvement</p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => window.location.href = '/datasets'}
+          className="border-white/20 text-slate-300 hover:text-white hover:bg-white/10"
+        >
+          <Database className="h-4 w-4 mr-2" />
+          Manage Datasets
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2].map((i) => (
+            <Card key={i} className="border-gray-700 bg-gray-800/50 animate-pulse">
+              <div className="p-6">
+                <div className="h-6 bg-gray-700 rounded mb-4"></div>
+                <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : datasets.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 space-y-4">
+          <Database className="h-16 w-16 text-slate-400" />
+          <h3 className="text-xl font-semibold text-white">No datasets available</h3>
+          <p className="text-center text-slate-400 max-w-md">
+            Create datasets in the Datasets page to perform prompt iteration.
+          </p>
+          <Button
+            onClick={() => window.location.href = '/datasets'}
+            className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600"
+          >
+            <Database className="h-4 w-4 mr-2" />
+            Go to Datasets
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {datasets.map((dataset) => (
+            <Card
+              key={dataset.id}
+              className="border-gray-700 bg-gray-800/50 backdrop-blur-sm hover:bg-gray-800/70 transition-colors cursor-pointer"
+              onClick={() => handleStartIteration(dataset)}
+            >
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-white mb-1">{dataset.name}</h3>
+                    <p className="text-sm text-slate-400">{dataset.description}</p>
+                  </div>
+                  <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 ml-2">
+                    {dataset.query_count} queries
+                  </Badge>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <p className="text-xs font-medium text-slate-300">Current system prompt:</p>
+                  <div className="bg-slate-800/50 border border-slate-600 rounded p-2 max-h-20 overflow-y-auto">
+                    <p className="text-xs text-slate-400 italic">
+                      "{dataset.system_prompt.substring(0, 100)}..."
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStartIteration(dataset);
+                  }}
+                >
+                  <Zap className="h-4 w-4 mr-2" />
+                  Start Prompt Iteration
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function EvaluationPage() {
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
   const [activeTab, setActiveTab] = useState('conversations');
   const [selectedDataset, setSelectedDataset] = useState<string | null>(null);
+  const [selectedIterationDataset, setSelectedIterationDataset] = useState<Dataset | null>(null);
 
   return (
     <div className="flex flex-col min-h-screen p-6">
@@ -224,7 +362,7 @@ export default function EvaluationPage() {
 
       {/* Tabs for different evaluation types */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
+        <TabsList className="grid w-full grid-cols-3 bg-white/5 border border-white/10">
           <TabsTrigger value="conversations" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
             Conversations
@@ -232,6 +370,10 @@ export default function EvaluationPage() {
           <TabsTrigger value="open-coding" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
             Open Coding Analysis
+          </TabsTrigger>
+          <TabsTrigger value="prompt-iteration" className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            Prompt Iteration
           </TabsTrigger>
         </TabsList>
 
@@ -267,6 +409,19 @@ export default function EvaluationPage() {
             selectedDataset={selectedDataset}
             onSelectDataset={setSelectedDataset}
           />
+        </TabsContent>
+
+        <TabsContent value="prompt-iteration" className="flex-1 mt-4">
+          {selectedIterationDataset ? (
+            <PromptIterationWorkspace
+              selectedDataset={selectedIterationDataset}
+              onBack={() => setSelectedIterationDataset(null)}
+            />
+          ) : (
+            <PromptIterationDatasetSelector
+              onSelectDataset={setSelectedIterationDataset}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>
