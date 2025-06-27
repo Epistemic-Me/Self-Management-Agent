@@ -15,8 +15,13 @@ import {
   RotateCw,
   CheckCircle,
   AlertCircle,
-  FileText
+  FileText,
+  ArrowRight
 } from 'lucide-react';
+import { FailureModeSummary } from './FailureModeSummary';
+import { AxialCoding } from './AxialCoding';
+import { PromptEditor } from './PromptEditor';
+import { IterationComparison } from './IterationComparison';
 
 // Types based on backend models
 interface TraceData {
@@ -47,6 +52,26 @@ interface OpenCodingProps {
   onComplete?: () => void;
 }
 
+interface PromptVersion {
+  version: number;
+  content: string;
+  timestamp: string;
+  executionId?: string;
+}
+
+interface DatasetFailureMode {
+  id: string;
+  label: string;
+  description: string;
+  count: number;
+  percentage: number;
+  traces: string[];
+  created_from_open_codes: string[]; // References to specific open code patterns
+}
+
+// Iteration workflow states
+type WorkflowState = 'coding' | 'summary' | 'axial_coding' | 'editing' | 'new_dataset_created' | 'annotating_new' | 'axial_coding_new' | 'comparison';
+
 const FAILURE_MODES = [
   { id: 'incomplete_response', label: 'Incomplete Response', description: 'Response lacks sufficient detail or completeness' },
   { id: 'hallucination_issues', label: 'Hallucination Issues', description: 'Response contains fabricated or incorrect information' },
@@ -72,6 +97,28 @@ export function OpenCodingInterface({ projectId, systemPrompt, sampleQueries, on
     open_code_notes: '',
     failure_modes: {}
   });
+
+  // Iteration workflow state
+  const [workflowState, setWorkflowState] = useState<WorkflowState>('coding');
+  const [promptVersions, setPromptVersions] = useState<PromptVersion[]>([]);
+  const [currentIterationExecutionId, setCurrentIterationExecutionId] = useState<string | null>(null);
+  const [iterationAnnotations, setIterationAnnotations] = useState<Record<string, AnnotationData>>({});
+  const [isIterationTesting, setIsIterationTesting] = useState(false);
+
+  // State for new dataset annotation
+  const [newTraces, setNewTraces] = useState<TraceData[]>([]);
+  const [newAnnotations, setNewAnnotations] = useState<Record<string, AnnotationData>>({});
+  const [newCurrentTraceIndex, setNewCurrentTraceIndex] = useState(0);
+  const [newProgress, setNewProgress] = useState<ProgressData>({ total_traces: 0, annotated_traces: 0, completion_percentage: 0 });
+  const [newCurrentAnnotation, setNewCurrentAnnotation] = useState<AnnotationData>({
+    trace_id: '',
+    open_code_notes: '',
+    failure_modes: {}
+  });
+
+  // State for failure modes (axial coding results)
+  const [originalDatasetFailureModes, setOriginalDatasetFailureModes] = useState<DatasetFailureMode[]>([]);
+  const [newDatasetFailureModes, setNewDatasetFailureModes] = useState<DatasetFailureMode[]>([]);
 
   // Auto-save current annotation when it changes
   useEffect(() => {
@@ -106,6 +153,106 @@ export function OpenCodingInterface({ projectId, systemPrompt, sampleQueries, on
       });
     }
   }, [currentTraceIndex, traces, annotations]);
+
+  // Initialize first prompt version
+  useEffect(() => {
+    if (promptVersions.length === 0 && systemPrompt) {
+      setPromptVersions([{
+        version: 1,
+        content: systemPrompt,
+        timestamp: new Date().toISOString(),
+        executionId: executionId || undefined
+      }]);
+    }
+  }, [systemPrompt, executionId, promptVersions.length]);
+
+  // Load new dataset when moving to comparison (manual annotation complete)
+  useEffect(() => {
+    if (currentIterationExecutionId && workflowState === 'comparison' && Object.keys(iterationAnnotations).length === 0) {
+      loadIterationAnnotations();
+    }
+  }, [currentIterationExecutionId, workflowState, iterationAnnotations]);
+
+  // Iteration workflow handlers
+  const handleStartIteration = () => {
+    setWorkflowState('editing');
+  };
+
+  const handleSaveNewPromptVersion = async (newPrompt: string) => {
+    const newVersion: PromptVersion = {
+      version: promptVersions.length + 1,
+      content: newPrompt,
+      timestamp: new Date().toISOString()
+    };
+    
+    setPromptVersions(prev => [...prev, newVersion]);
+    
+    // Create new dataset with the improved prompt
+    setIsIterationTesting(true);
+    setWorkflowState('new_dataset_created');
+    
+    try {
+      // Execute the same queries with the new prompt to create new dataset
+      const response = await fetch('/api/open-coding/execute-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: `${projectId}_v${newVersion.version}`,
+          system_prompt: newPrompt,
+          sample_queries: sampleQueries
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to create new dataset');
+      
+      const result = await response.json();
+      newVersion.executionId = result.execution_id;
+      setCurrentIterationExecutionId(result.execution_id);
+      
+      // Update the version with execution ID
+      setPromptVersions(prev => 
+        prev.map(v => v.version === newVersion.version ? { ...v, executionId: result.execution_id } : v)
+      );
+      
+    } catch (error) {
+      console.error('Error creating new dataset:', error);
+      setWorkflowState('editing'); // Return to editing on error
+    } finally {
+      setIsIterationTesting(false);
+    }
+  };
+
+  const loadIterationAnnotations = async () => {
+    if (!currentIterationExecutionId) return;
+    
+    try {
+      const response = await fetch(`/api/open-coding/annotations/${currentIterationExecutionId}`);
+      if (!response.ok) throw new Error('Failed to load iteration annotations');
+      
+      const annotationsData = await response.json();
+      setIterationAnnotations(annotationsData);
+    } catch (error) {
+      console.error('Error loading iteration annotations:', error);
+    }
+  };
+
+  const handleReturnToAnalysis = () => {
+    setWorkflowState('summary');
+  };
+
+  const handleStartNewIteration = () => {
+    setWorkflowState('editing');
+  };
+
+  const handleStartAnnotatingNew = () => {
+    setWorkflowState('annotating_new');
+  };
+
+  const handleCompleteNewAnnotations = async () => {
+    // Load the manually annotated data for the new dataset
+    await loadIterationAnnotations();
+    setWorkflowState('comparison');
+  };
 
   // Execute batch traces
   const handleExecuteBatch = async () => {
@@ -228,6 +375,34 @@ export function OpenCodingInterface({ projectId, systemPrompt, sampleQueries, on
     }
   };
 
+  // Complete open coding and show summary
+  const handleCompleteOpenCoding = () => {
+    setWorkflowState('summary');
+  };
+
+  const handleStartAxialCoding = async () => {
+    // Ensure annotations are loaded before transitioning
+    if (executionId) {
+      await loadAnnotations(executionId);
+    }
+    console.log('Starting axial coding with annotations:', annotations);
+    setWorkflowState('axial_coding');
+  };
+
+  const handleCompleteAxialCoding = (failureModes: DatasetFailureMode[]) => {
+    setOriginalDatasetFailureModes(failureModes);
+    setWorkflowState('editing');
+  };
+
+  const handleStartAxialCodingNew = () => {
+    setWorkflowState('axial_coding_new');
+  };
+
+  const handleCompleteAxialCodingNew = (failureModes: DatasetFailureMode[]) => {
+    setNewDatasetFailureModes(failureModes);
+    setWorkflowState('comparison');
+  };
+
   // Navigation
   const goToPrevious = () => {
     if (currentTraceIndex > 0) {
@@ -243,6 +418,179 @@ export function OpenCodingInterface({ projectId, systemPrompt, sampleQueries, on
 
   const currentTrace = traces[currentTraceIndex];
 
+  // Get failure mode summary data for components
+  const getFailureModeSummary = () => {
+    return FAILURE_MODES.map(mode => {
+      const count = Object.values(annotations).filter(
+        annotation => annotation.failure_modes?.[mode.id]
+      ).length;
+      return {
+        label: mode.label,
+        count,
+        percentage: traces.length > 0 ? (count / traces.length) * 100 : 0
+      };
+    }).filter(failure => failure.count > 0)
+     .sort((a, b) => b.count - a.count);
+  };
+
+  // Render different workflow states
+  if (workflowState === 'summary') {
+    return (
+      <FailureModeSummary
+        annotations={annotations}
+        totalTraces={traces.length}
+        onStartAxialCoding={handleStartAxialCoding}
+      />
+    );
+  }
+
+  if (workflowState === 'axial_coding') {
+    return (
+      <AxialCoding
+        annotations={annotations}
+        totalTraces={traces.length}
+        datasetId={executionId || 'unknown'}
+        onComplete={handleCompleteAxialCoding}
+        onCancel={() => setWorkflowState('summary')}
+      />
+    );
+  }
+
+  if (workflowState === 'editing') {
+    // Use failure modes from axial coding instead of simple summary
+    const failureModesSummary = originalDatasetFailureModes.map(fm => ({
+      label: fm.label,
+      count: fm.count,
+      percentage: fm.percentage
+    }));
+    
+    return (
+      <PromptEditor
+        currentPrompt={promptVersions[promptVersions.length - 1]?.content || systemPrompt}
+        previousVersions={promptVersions.slice(0, -1)}
+        topFailureModes={failureModesSummary}
+        datasetFailureModes={originalDatasetFailureModes}
+        onSaveVersion={handleSaveNewPromptVersion}
+        onCancel={handleReturnToAnalysis}
+        isLoading={isIterationTesting}
+      />
+    );
+  }
+
+  if (workflowState === 'axial_coding_new') {
+    return (
+      <AxialCoding
+        annotations={iterationAnnotations}
+        totalTraces={sampleQueries.length}
+        datasetId={currentIterationExecutionId || 'unknown'}
+        onComplete={handleCompleteAxialCodingNew}
+        onCancel={() => setWorkflowState('annotating_new')}
+      />
+    );
+  }
+
+  if (workflowState === 'new_dataset_created') {
+    return (
+      <div className="space-y-6">
+        <Card className="bg-white/5 backdrop-blur-sm border border-white/10 p-8">
+          <div className="text-center space-y-4">
+            {isIterationTesting ? (
+              <>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400 mx-auto mb-4"></div>
+                <p className="text-white text-lg">Creating New Dataset</p>
+                <p className="text-slate-400">Generating traces with your improved prompt...</p>
+              </>
+            ) : (
+              <>
+                <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
+                <p className="text-white text-xl mb-2">New Dataset Created!</p>
+                <p className="text-slate-400 mb-6">
+                  Version {promptVersions.length} dataset has been generated with {sampleQueries.length} traces.
+                  <br />
+                  Now you need to manually annotate each trace to identify failure modes.
+                </p>
+                <Button
+                  onClick={handleStartAnnotatingNew}
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                >
+                  <ArrowRight className="h-4 w-4 mr-2" />
+                  Start Annotating New Dataset
+                </Button>
+              </>
+            )}
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  if (workflowState === 'annotating_new') {
+    // For now, redirect to creating a new OpenCodingInterface instance for the new dataset
+    // This ensures the developer manually annotates the new dataset
+    return (
+      <div className="space-y-6">
+        <Card className="bg-white/5 backdrop-blur-sm border border-white/10 p-8">
+          <div className="text-center space-y-4">
+            <FileText className="h-12 w-12 text-blue-400 mx-auto mb-4" />
+            <p className="text-white text-xl mb-2">Ready to Annotate New Dataset</p>
+            <p className="text-slate-400 mb-6">
+              Your improved prompt (Version {promptVersions.length}) has generated a new dataset with {sampleQueries.length} traces.
+              <br />
+              <strong>Manual annotation required:</strong> You need to review each trace and apply failure mode annotations.
+            </p>
+            
+            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6">
+              <p className="text-yellow-400 text-sm">
+                <strong>Next Steps:</strong>
+                <br />
+                1. Open a new Open Coding session for dataset: <code>{currentIterationExecutionId}</code>
+                <br />
+                2. Manually annotate each trace with failure modes 
+                <br />
+                3. Complete at least 80% of annotations
+                <br />
+                4. Return here to compare with original dataset
+              </p>
+            </div>
+
+            <div className="flex space-x-3 justify-center">
+              <Button
+                onClick={handleReturnToAnalysis}
+                variant="outline"
+                className="border-white/20 text-slate-300 hover:text-white hover:bg-white/10"
+              >
+                Return to Analysis
+              </Button>
+              <Button
+                onClick={handleStartAxialCodingNew}
+                className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+              >
+                <ArrowRight className="h-4 w-4 mr-2" />
+                I've Completed Annotations - Start Axial Coding
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  if (workflowState === 'comparison') {
+    return (
+      <IterationComparison
+        beforeFailureModes={originalDatasetFailureModes}
+        afterFailureModes={newDatasetFailureModes}
+        beforeDatasetId={executionId || 'unknown'}
+        afterDatasetId={currentIterationExecutionId || 'unknown'}
+        beforeVersion={promptVersions.length > 0 ? promptVersions[0].version : 1}
+        afterVersion={promptVersions.length > 0 ? promptVersions[promptVersions.length - 1].version : 2}
+        onStartNewIteration={handleStartNewIteration}
+        onReturnToAnalysis={handleReturnToAnalysis}
+      />
+    );
+  }
+
+  // Default: original open coding interface
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -296,6 +644,16 @@ export function OpenCodingInterface({ projectId, systemPrompt, sampleQueries, on
                   </>
                 )}
               </Button>
+              
+              {progress.completion_percentage >= 80 && (
+                <Button
+                  onClick={handleCompleteOpenCoding}
+                  className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+                >
+                  <ArrowRight className="h-4 w-4 mr-2" />
+                  Analyze & Improve
+                </Button>
+              )}
             </div>
           )}
         </div>
