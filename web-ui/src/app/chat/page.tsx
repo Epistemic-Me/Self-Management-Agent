@@ -9,10 +9,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bell, Settings, Calendar, Bot, Sliders, MessageSquare, Wrench } from 'lucide-react';
+import { Bell, Settings, Calendar, Bot, Sliders, MessageSquare, Wrench, Brain, Users } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { startConversation, appendTurn, getConversation } from '@/lib/api';
 import { getProjectState, isProjectSetup, updateProjectState } from '@/lib/project-state';
+import { healthCoachService } from '@/lib/health-coach';
 import type { ConversationDetail, Turn } from '@/lib/api';
+import type { Cohort, HealthCoachResponse, Provenance } from '@/types/health-coach';
 
 export default function ChatPage() {
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -23,6 +26,11 @@ export default function ChatPage() {
   const [currentMessage, setCurrentMessage] = useState('');
   const [activeTab, setActiveTab] = useState('chat');
   const [systemPrompt, setSystemPrompt] = useState('');
+  const [useHealthCoach, setUseHealthCoach] = useState(true);
+  const [selectedCohort, setSelectedCohort] = useState<string>('health_enthusiast');
+  const [availableCohorts, setAvailableCohorts] = useState<Cohort[]>([]);
+  const [sessionId, setSessionId] = useState<string>('');
+  const [messageProvenances, setMessageProvenances] = useState<Map<string, Provenance>>(new Map());
 
   useEffect(() => {
     // Check if project exists and start conversation
@@ -38,10 +46,20 @@ export default function ChatPage() {
         setSystemPrompt(prompt);
       }
 
+      // Load cohorts for Health Coach
+      try {
+        const cohorts = await healthCoachService.getCohorts();
+        setAvailableCohorts(cohorts);
+      } catch (error) {
+        console.error('Failed to load cohorts:', error);
+      }
+
       // Start a new conversation on mount
       try {
         const result = await startConversation();
         setConversationId(result.conversation_id);
+        // Generate session ID for Health Coach
+        setSessionId(`session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
       } catch (error) {
         console.error('Failed to start conversation:', error);
       }
@@ -72,21 +90,49 @@ export default function ChatPage() {
     if (!conversationId) return;
 
     setIsLoading(true);
+    let assistantResponse: string = '';
+    let provenance: Provenance | undefined;
+
     try {
       // Add user message
       await appendTurn(conversationId, 'user', content);
       
-      // If project exists, use the configured prompt for testing
-      let assistantResponse: string;
-      
-      if (projectExists) {
-        // Test with the actual configured prompt
+      if (useHealthCoach) {
+        // Use Health Coach Agent
+        try {
+          const healthCoachResponse: HealthCoachResponse = await healthCoachService.sendMessage({
+            message: content,
+            user_id: 'demo_user', // TODO: Get from auth
+            session_id: sessionId,
+            cohort: selectedCohort,
+            context: {
+              conversation_history: conversation?.turns.slice(-5) || [] // Last 5 messages for context
+            },
+            include_provenance: true
+          });
+
+          assistantResponse = healthCoachResponse.response;
+          provenance = healthCoachResponse.provenance;
+
+          // Store provenance for display
+          if (provenance) {
+            const newProvenances = new Map(messageProvenances);
+            const messageId = `msg_${Date.now()}`;
+            newProvenances.set(messageId, provenance);
+            setMessageProvenances(newProvenances);
+          }
+
+        } catch (error) {
+          console.error('Health Coach error:', error);
+          assistantResponse = 'Sorry, I encountered an error with the Health Coach. Please try again.';
+        }
+      } else if (projectExists) {
+        // Use traditional prompt testing
         const projectState = getProjectState();
         const systemPrompt = projectState.projectData?.promptConfiguration?.systemPrompt;
         
         if (systemPrompt) {
           try {
-            // Call our prompt testing API
             const response = await fetch('/api/prompt-test/test', {
               method: 'POST',
               headers: {
@@ -179,7 +225,41 @@ export default function ChatPage() {
             <Calendar className="h-4 w-4 mr-2" />
             <span>Phase 2 Active</span>
           </Badge>
-          {projectExists && (
+          
+          {/* Health Coach Toggle */}
+          <Button 
+            variant={useHealthCoach ? "default" : "outline"}
+            size="sm" 
+            onClick={() => setUseHealthCoach(!useHealthCoach)}
+            className={useHealthCoach 
+              ? "bg-green-600 hover:bg-green-700 text-white" 
+              : "text-slate-300 hover:text-white border-slate-600 hover:border-green-500 hover:bg-green-500/10"
+            }
+          >
+            <Brain className="h-4 w-4 mr-2" />
+            Health Coach {useHealthCoach ? 'ON' : 'OFF'}
+          </Button>
+
+          {/* Cohort Selection */}
+          {useHealthCoach && (
+            <Select value={selectedCohort} onValueChange={setSelectedCohort}>
+              <SelectTrigger className="w-48 border-slate-600 bg-slate-800/50">
+                <div className="flex items-center">
+                  <Users className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Select cohort" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {availableCohorts.map((cohort) => (
+                  <SelectItem key={cohort.id} value={cohort.id}>
+                    {cohort.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          
+          {projectExists && !useHealthCoach && (
             <Button 
               variant="outline"
               size="sm" 
@@ -217,37 +297,67 @@ export default function ChatPage() {
 
         <TabsContent value="chat" className="flex-1 flex flex-col mt-4">
           <div className="flex-1 overflow-y-auto space-y-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
-        {conversation?.turns.map((turn: Turn) => (
-          <ChatBubble
-            key={turn.id}
-            role={turn.role}
-            content={turn.content}
-            timestamp={turn.created_at}
-          />
-        ))}
+        {conversation?.turns.map((turn: Turn, index: number) => {
+          // Get provenance for assistant messages
+          const turnProvenance = turn.role === 'assistant' && useHealthCoach 
+            ? Array.from(messageProvenances.values())[Math.floor(index / 2)] // Rough mapping
+            : undefined;
+            
+          return (
+            <ChatBubble
+              key={turn.id}
+              role={turn.role}
+              content={turn.content}
+              timestamp={turn.created_at}
+              provenance={turnProvenance}
+            />
+          );
+        })}
         
         {conversation?.turns.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-epistemic-cyan to-epistemic-cyan-dark flex items-center justify-center mb-4">
-              <span className="text-2xl font-bold text-background">E</span>
+              {useHealthCoach ? (
+                <Brain className="w-8 h-8 text-background" />
+              ) : (
+                <span className="text-2xl font-bold text-background">E</span>
+              )}
             </div>
             <h3 className="text-lg font-semibold text-foreground">
-              Welcome to Epistemic Me
+              {useHealthCoach ? 'AI Health Coach' : 'Welcome to Epistemic Me'}
             </h3>
             <p className="text-center text-muted-foreground max-w-md">
-              Start a conversation and experience AI that understands your unique beliefs and perspectives. 
-              This system quantifies subjectivity to provide truly personalized interactions.
+              {useHealthCoach 
+                ? `Start a conversation with your ${availableCohorts.find(c => c.id === selectedCohort)?.name || 'health coach'}. I'll provide personalized guidance with full provenance tracking showing my reasoning process.`
+                : 'Start a conversation and experience AI that understands your unique beliefs and perspectives. This system quantifies subjectivity to provide truly personalized interactions.'
+              }
             </p>
             <div className="flex flex-wrap gap-2 mt-4">
-              <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
-                Belief Modeling
-              </span>
-              <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
-                Personalization
-              </span>
-              <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
-                Subjectivity Analysis
-              </span>
+              {useHealthCoach ? (
+                <>
+                  <span className="px-3 py-1 text-xs bg-green-500/10 text-green-400 rounded-full border border-green-500/20">
+                    Hierarchical Constraints
+                  </span>
+                  <span className="px-3 py-1 text-xs bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20">
+                    Provenance Tracking
+                  </span>
+                  <span className="px-3 py-1 text-xs bg-purple-500/10 text-purple-400 rounded-full border border-purple-500/20">
+                    Intent Classification
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
+                    Belief Modeling
+                  </span>
+                  <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
+                    Personalization
+                  </span>
+                  <span className="px-3 py-1 text-xs bg-epistemic-cyan/10 text-epistemic-cyan rounded-full border border-epistemic-cyan/20">
+                    Subjectivity Analysis
+                  </span>
+                </>
+              )}
             </div>
           </div>
         )}

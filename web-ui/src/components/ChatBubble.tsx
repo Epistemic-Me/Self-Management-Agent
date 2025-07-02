@@ -4,14 +4,17 @@ import { cn } from '@/lib/utils';
 import { Bot, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { ProvenanceDisplay } from '@/components/Chat/ProvenanceDisplay';
+import type { Provenance } from '@/types/health-coach';
 
 interface ChatBubbleProps {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
+  provenance?: Provenance;
 }
 
-export function ChatBubble({ role, content, timestamp }: ChatBubbleProps) {
+export function ChatBubble({ role, content, timestamp, provenance }: ChatBubbleProps) {
   const isUser = role === 'user';
   const isSystem = role === 'system';
 
@@ -71,7 +74,19 @@ export function ChatBubble({ role, content, timestamp }: ChatBubbleProps) {
         )}>
           {new Date(timestamp).toLocaleTimeString()}
         </div>
+        
+        {/* Show provenance for assistant messages */}
+        {!isUser && !isSystem && provenance && (
+          <ProvenanceDisplay provenance={provenance} compact />
+        )}
       </div>
+      
+      {/* Expanded provenance for assistant messages */}
+      {!isUser && !isSystem && provenance && (
+        <div className="w-full">
+          <ProvenanceDisplay provenance={provenance} />
+        </div>
+      )}
 
       {isUser && (
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center">
