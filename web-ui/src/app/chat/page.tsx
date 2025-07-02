@@ -259,7 +259,7 @@ export default function ChatPage() {
             </Select>
           )}
           
-          {projectExists && !useHealthCoach && (
+          {(projectExists || useHealthCoach) && (
             <Button 
               variant="outline"
               size="sm" 
@@ -267,7 +267,7 @@ export default function ChatPage() {
               className="text-slate-300 hover:text-white border-slate-600 hover:border-cyan-500 hover:bg-cyan-500/10"
             >
               <Sliders className="h-4 w-4 mr-2" />
-              Test Prompt
+              {useHealthCoach ? 'Test Health Coach' : 'Test Prompt'}
             </Button>
           )}
           <Button variant="ghost" size="sm" className="text-slate-300 hover:text-white hover:bg-white/10 backdrop-blur-sm">
@@ -394,6 +394,8 @@ export default function ChatPage() {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         onTestPrompt={handleTestPrompt}
+        useHealthCoach={useHealthCoach}
+        selectedCohort={selectedCohort}
       />
     </div>
   );
