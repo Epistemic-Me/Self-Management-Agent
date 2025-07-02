@@ -336,7 +336,7 @@ export function PromptTestingDrawer({
             )}
           </div>
           
-          <div className="space-y-2">
+          <div className="max-h-80 overflow-y-auto space-y-2 pr-2">
             {sampleQueries.map((query, index) => (
               <button
                 key={index}
