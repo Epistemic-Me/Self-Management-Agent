@@ -184,7 +184,7 @@ export function PromptTestingDrawer({
   };
 
   return (
-    <div className={`fixed inset-y-0 right-0 w-96 bg-slate-900/95 backdrop-blur-md border-l border-white/10 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${className}`}>
+    <div className={`fixed inset-y-0 right-0 w-96 bg-slate-900/95 backdrop-blur-md border-l border-white/10 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-white/10">
         <div className="flex items-center space-x-3">
@@ -218,7 +218,7 @@ export function PromptTestingDrawer({
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 max-h-[calc(100vh-80px)]">
         {/* Project Info */}
         {projectSummary && (
           <Card className="bg-white/5 border border-white/10 p-4">
@@ -336,7 +336,7 @@ export function PromptTestingDrawer({
             )}
           </div>
           
-          <div className="max-h-80 overflow-y-auto space-y-2 pr-2">
+          <div className="max-h-60 overflow-y-auto space-y-2 pr-2">
             {sampleQueries.map((query, index) => (
               <button
                 key={index}
