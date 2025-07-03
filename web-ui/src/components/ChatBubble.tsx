@@ -49,7 +49,8 @@ export function ChatBubble({ role, content, timestamp, provenance }: ChatBubbleP
                 h2: ({children}) => <h2 className="text-base font-semibold mb-2">{children}</h2>,
                 h3: ({children}) => <h3 className="text-sm font-medium mb-1">{children}</h3>,
                 p: ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
-                code: ({children, inline}) => {
+                code: ({children, ...props}: any) => {
+                  const inline = props.inline || !props.className;
                   return inline 
                     ? <code className="bg-slate-800/50 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-600">{children}</code>
                     : <code className="bg-slate-800/50 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-600">{children}</code>;

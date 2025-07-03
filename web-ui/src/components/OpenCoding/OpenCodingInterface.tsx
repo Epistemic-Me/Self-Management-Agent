@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -166,12 +166,26 @@ export function OpenCodingInterface({ projectId, systemPrompt, sampleQueries, on
     }
   }, [systemPrompt, executionId, promptVersions.length]);
 
+  const loadIterationAnnotations = useCallback(async () => {
+    if (!currentIterationExecutionId) return;
+    
+    try {
+      const response = await fetch(`/api/open-coding/annotations/${currentIterationExecutionId}`);
+      if (!response.ok) throw new Error('Failed to load iteration annotations');
+      
+      const annotationsData = await response.json();
+      setIterationAnnotations(annotationsData);
+    } catch (error) {
+      console.error('Error loading iteration annotations:', error);
+    }
+  }, [currentIterationExecutionId]);
+
   // Load new dataset when moving to comparison (manual annotation complete)
   useEffect(() => {
     if (currentIterationExecutionId && workflowState === 'comparison' && Object.keys(iterationAnnotations).length === 0) {
       loadIterationAnnotations();
     }
-  }, [currentIterationExecutionId, workflowState, iterationAnnotations]);
+  }, [currentIterationExecutionId, workflowState, iterationAnnotations, loadIterationAnnotations]);
 
   // Iteration workflow handlers
   const handleStartIteration = () => {
@@ -219,20 +233,6 @@ export function OpenCodingInterface({ projectId, systemPrompt, sampleQueries, on
       setWorkflowState('editing'); // Return to editing on error
     } finally {
       setIsIterationTesting(false);
-    }
-  };
-
-  const loadIterationAnnotations = async () => {
-    if (!currentIterationExecutionId) return;
-    
-    try {
-      const response = await fetch(`/api/open-coding/annotations/${currentIterationExecutionId}`);
-      if (!response.ok) throw new Error('Failed to load iteration annotations');
-      
-      const annotationsData = await response.json();
-      setIterationAnnotations(annotationsData);
-    } catch (error) {
-      console.error('Error loading iteration annotations:', error);
     }
   };
 

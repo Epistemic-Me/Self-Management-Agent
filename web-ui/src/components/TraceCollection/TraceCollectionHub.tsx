@@ -102,7 +102,7 @@ export function TraceCollectionHub() {
     poll();
   }, [toast]);
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = useCallback(async (file: File) => {
     const fileId = `upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Add to upload progress
@@ -165,7 +165,7 @@ export function TraceCollectionHub() {
         variant: "destructive",
       });
     }
-  };
+  }, [pollValidationStatus, toast]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -188,7 +188,7 @@ export function TraceCollectionHub() {
     }
 
     validFiles.forEach(uploadFile);
-  }, [toast]);
+  }, [toast, uploadFile]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

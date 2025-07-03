@@ -123,6 +123,13 @@ export function IterationComparison({
   const overallImprovement = totalBeforeFailures - totalAfterFailures;
   const overallImprovementPercentage = totalBeforeFailures > 0 ? 
     ((overallImprovement / totalBeforeFailures) * 100) : 0;
+  
+  // Calculate total traces (assuming each trace could have multiple failure modes)
+  const beforeTraceIds = new Set<string>();
+  const afterTraceIds = new Set<string>();
+  beforeFailureModes.forEach(fm => fm.traces.forEach(t => beforeTraceIds.add(t)));
+  afterFailureModes.forEach(fm => fm.traces.forEach(t => afterTraceIds.add(t)));
+  const totalTraces = Math.max(beforeTraceIds.size, afterTraceIds.size);
 
   const getImprovementColor = (improvement: number) => {
     if (improvement > 0) return 'text-green-400';

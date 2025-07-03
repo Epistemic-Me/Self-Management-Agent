@@ -1,0 +1,26 @@
+{
+  "dataset_dataset_1_20250625_231614_q1": {
+    "trace_id": "dataset_dataset_1_20250625_231614_q1",
+    "open_code_notes": "",
+    "failure_modes": {
+      "prompt_instruction_ignored": true
+    },
+    "timestamp": "2025-06-25T23:16:29.116950"
+  },
+  "dataset_dataset_1_20250625_231614_q2": {
+    "trace_id": "dataset_dataset_1_20250625_231614_q2",
+    "open_code_notes": "",
+    "failure_modes": {
+      "formatting_inconsistencies": true
+    },
+    "timestamp": "2025-06-25T23:16:34.158518"
+  },
+  "dataset_dataset_1_20250625_231614_q3": {
+    "trace_id": "dataset_dataset_1_20250625_231614_q3",
+    "open_code_notes": "",
+    "failure_modes": {
+      "formatting_inconsistencies": true
+    },
+    "timestamp": "2025-06-25T23:16:39.018578"
+  }
+}

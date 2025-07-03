@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     
     # OpenAI Configuration
     OPENAI_API_KEY: str
-    OPENAI_MODEL: str = "gpt-4-turbo-preview"
+    OPENAI_MODEL: str = "gpt-4o-mini"
     
     # Service URLs
     PROFILE_MCP_URL: str = "http://profile-mcp:8010"

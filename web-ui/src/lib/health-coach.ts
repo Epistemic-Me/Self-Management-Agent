@@ -11,7 +11,7 @@ export class HealthCoachService {
 
   constructor() {
     this.baseURL = HEALTH_COACH_BASE_URL;
-    this.apiKey = process.env.HEALTH_COACH_API_KEY;
+    this.apiKey = process.env.NEXT_PUBLIC_HEALTH_COACH_API_KEY;
   }
 
   private getHeaders() {
@@ -41,6 +41,56 @@ export class HealthCoachService {
     }
 
     return response.json();
+  }
+
+  async sendMessageStream(
+    request: ChatRequest,
+    onMessage: (message: any) => void
+  ): Promise<void> {
+    const response = await fetch(`${this.baseURL}/chat/stream`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify({
+        ...request,
+        include_provenance: true,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Health Coach Stream API error: ${response.status}`);
+    }
+
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('No response body reader available');
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              onMessage(data);
+            } catch (e) {
+              console.warn('Failed to parse SSE message:', line);
+            }
+          }
+        }
+      }
+    } finally {
+      reader.releaseLock();
+    }
   }
 
   async getCohorts(): Promise<Cohort[]> {

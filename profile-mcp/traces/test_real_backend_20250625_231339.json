@@ -1,0 +1,16 @@
+[
+  {
+    "id": "test_real_backend_20250625_231339_q1",
+    "query": "What is AI?",
+    "response": "AI, or artificial intelligence, refers to the simulation of human intelligence in machines that are programmed to think and learn. These systems can perform tasks that typically require human intelligence, such as understanding natural language, recognizing patterns, solving problems, and making decisions. AI can be categorized into two main types: narrow AI, which is designed for specific tasks (like virtual assistants), and general AI, which would possess broader cognitive abilities similar to those of humans (though this level of AI does not yet exist).",
+    "timestamp": "2025-06-25T23:13:42.528069",
+    "project_id": "test_real_backend"
+  },
+  {
+    "id": "test_real_backend_20250625_231339_q2",
+    "query": "How does machine learning work?",
+    "response": "Machine learning (ML) is a subset of artificial intelligence that enables systems to learn from data and improve their performance over time without being explicitly programmed. Here's a brief overview of how it works:\n\n1. **Data Collection**: Gather relevant data that the model will learn from. This data can come from various sources and needs to be representative of the problem you want to solve.\n\n2. **Data Preparation**: Clean and preprocess the data. This may involve handling missing values, normalizing or standardizing data, and converting categorical variables into numerical formats.\n\n3. **Choosing a Model**: Select an appropriate machine learning algorithm based on the problem type (e.g., classification, regression, clustering).\n\n4. **Training the Model**: Split the data into training and testing sets. The training set is used to teach the model by feeding it input data and corresponding output labels. The model learns to recognize patterns in the data.\n\n5. **Evaluation**: After training, the model is tested using the testing set to evaluate its performance. Common metrics include accuracy, precision, recall, and F1 score, depending on the problem.\n\n6. **Tuning**: Adjust the model's parameters (hyperparameters) to improve performance. This process, called hyperparameter tuning, may involve techniques like cross-validation.\n\n7. **Deployment**: Once satisfied with the model's performance, it can be deployed in a real-world application to make predictions on new, unseen data.\n\n8. **Monitoring and Maintenance**: Continuously monitor the model's performance and update it with new data or retrain it as necessary to maintain accuracy over time.\n\nIn summary, machine learning involves using algorithms to analyze data, identify patterns, and make predictions or decisions based on those patterns.",
+    "timestamp": "2025-06-25T23:13:50.398366",
+    "project_id": "test_real_backend"
+  }
+]

@@ -2,7 +2,7 @@
 Health Coach service for generating constraint-based responses
 """
 import logging
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, AsyncGenerator
 from openai import AsyncOpenAI
 import httpx
 
@@ -66,6 +66,53 @@ class HealthCoach:
         except Exception as e:
             logger.error(f"Response generation error: {str(e)}")
             return self._get_fallback_response(routing_decision)
+
+    async def generate_response_stream(
+        self,
+        query: str,
+        routing_decision: RoutingDecision,
+        user_cohort: Cohort,
+        context: Optional[Dict[str, Any]] = None
+    ) -> AsyncGenerator[str, None]:
+        """Stream response generation in real-time"""
+        try:
+            # Get relevant context from retrievers
+            retrieval_context = await self._gather_context(
+                routing_decision, user_cohort, context
+            )
+            
+            # Build system prompt with constraints
+            system_prompt = self._build_system_prompt(
+                routing_decision, user_cohort
+            )
+            
+            # Build user prompt with context
+            user_prompt = self._build_user_prompt(
+                query, retrieval_context
+            )
+            
+            # Generate streaming response
+            stream = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.7,
+                max_tokens=800,
+                stream=True
+            )
+            
+            async for chunk in stream:
+                if chunk.choices[0].delta.content:
+                    yield chunk.choices[0].delta.content
+                    
+        except Exception as e:
+            logger.error(f"Streaming response generation error: {str(e)}")
+            # Fallback to non-streaming response
+            fallback = self._get_fallback_response(routing_decision)
+            for word in fallback.split():
+                yield word + " "
     
     async def _gather_context(
         self,

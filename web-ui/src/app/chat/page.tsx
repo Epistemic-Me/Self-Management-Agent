@@ -1,21 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageInput } from '@/components/MessageInput';
 import { ChatBubble } from '@/components/ChatBubble';
 import { PromptTestingDrawer } from '@/components/Chat/PromptTestingDrawer';
+import { ProvenanceBubble } from '@/components/Chat/ProvenanceBubble';
 import { PromptConfigurationStep } from '@/components/ProjectSetup/PromptConfigurationStep';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bell, Settings, Calendar, Bot, Sliders, MessageSquare, Wrench, Brain, Users } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { startConversation, appendTurn, getConversation } from '@/lib/api';
-import { getProjectState, isProjectSetup, updateProjectState } from '@/lib/project-state';
+import { getProjectState, isProjectSetup } from '@/lib/project-state';
 import { healthCoachService } from '@/lib/health-coach';
 import type { ConversationDetail, Turn } from '@/lib/api';
-import type { Cohort, HealthCoachResponse, Provenance } from '@/types/health-coach';
+import type { Cohort, HealthCoachResponse, Provenance, StreamMessage } from '@/types/health-coach';
 
 export default function ChatPage() {
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -31,6 +34,29 @@ export default function ChatPage() {
   const [availableCohorts, setAvailableCohorts] = useState<Cohort[]>([]);
   const [sessionId, setSessionId] = useState<string>('');
   const [messageProvenances, setMessageProvenances] = useState<Map<string, Provenance>>(new Map());
+  const [isStreaming, setIsStreaming] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [streamingTurns, setStreamingTurns] = useState<Array<{
+    id: string;
+    role: 'provenance' | 'assistant';
+    content: string;
+    timestamp: string;
+    stages?: Array<{
+      stage: string;
+      description: string;
+      data: any;
+      timestamp: string;
+      status: 'pending' | 'processing' | 'complete' | 'error';
+    }>;
+    isStreaming?: boolean;
+  }>>([]);
+  
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [conversation?.turns, streamingTurns]);
 
   useEffect(() => {
     // Check if project exists and start conversation
@@ -42,7 +68,7 @@ export default function ChatPage() {
       // Load system prompt from project state
       if (exists) {
         const projectState = getProjectState();
-        const prompt = projectState.projectData?.promptConfiguration?.systemPrompt || '';
+        const prompt = (projectState.projectData as any)?.promptConfiguration?.systemPrompt || '';
         setSystemPrompt(prompt);
       }
 
@@ -68,14 +94,7 @@ export default function ChatPage() {
     initPage();
   }, []);
 
-  useEffect(() => {
-    // Load conversation when conversationId changes
-    if (conversationId) {
-      loadConversation();
-    }
-  }, [conversationId]);
-
-  const loadConversation = async () => {
+  const loadConversation = useCallback(async () => {
     if (!conversationId) return;
     
     try {
@@ -84,7 +103,14 @@ export default function ChatPage() {
     } catch (error) {
       console.error('Failed to load conversation:', error);
     }
-  };
+  }, [conversationId]);
+
+  useEffect(() => {
+    // Load conversation when conversationId changes
+    if (conversationId) {
+      loadConversation();
+    }
+  }, [conversationId, loadConversation]);
 
   const handleSendMessage = async (content: string) => {
     if (!conversationId) return;
@@ -94,13 +120,41 @@ export default function ChatPage() {
     let provenance: Provenance | undefined;
 
     try {
-      // Add user message
-      await appendTurn(conversationId, 'user', content);
+      // Add user message immediately to UI
+      const userTurn: Turn = {
+        id: `user_${Date.now()}`,
+        conversation_id: conversationId,
+        role: 'user',
+        content: content,
+        created_at: new Date().toISOString()
+      };
+      
+      // Update local conversation state immediately
+      setConversation(prev => prev ? {
+        ...prev,
+        turns: [...prev.turns, userTurn]
+      } : null);
+      
+      // Clear any previous streaming turns for new conversation
+      setStreamingTurns([]);
+      
+      // Clear the message input immediately
+      setCurrentMessage('');
+      
+      // Add to backend asynchronously
+      appendTurn(conversationId, 'user', content);
       
       if (useHealthCoach) {
-        // Use Health Coach Agent
+        // Use Health Coach Agent with streaming
         try {
-          const healthCoachResponse: HealthCoachResponse = await healthCoachService.sendMessage({
+          setIsStreaming(true);
+          setStreamingTurns([]);
+          
+          let provenanceStages: Array<any> = [];
+          let provenanceTurnId: string | null = null;
+          let responseTurnId: string | null = null;
+          
+          await healthCoachService.sendMessageStream({
             message: content,
             user_id: 'demo_user', // TODO: Get from auth
             session_id: sessionId,
@@ -109,27 +163,90 @@ export default function ChatPage() {
               conversation_history: conversation?.turns.slice(-5) || [] // Last 5 messages for context
             },
             include_provenance: true
+          }, (streamMessage: StreamMessage) => {
+            if (streamMessage.type === 'provenance' && streamMessage.stage && streamMessage.data) {
+              const stageData = {
+                stage: streamMessage.stage,
+                description: streamMessage.data.description || `Processing ${streamMessage.stage}`,
+                data: streamMessage.data,
+                timestamp: streamMessage.timestamp,
+                status: 'processing' as const
+              };
+              
+              provenanceStages.push(stageData);
+              
+              // Create or update provenance turn
+              if (!provenanceTurnId) {
+                provenanceTurnId = `provenance_${Date.now()}`;
+                setStreamingTurns([{
+                  id: provenanceTurnId,
+                  role: 'provenance',
+                  content: '',
+                  timestamp: new Date().toISOString(),
+                  stages: [stageData],
+                  isStreaming: true
+                }]);
+              } else {
+                setStreamingTurns(prev => prev.map(turn => 
+                  turn.id === provenanceTurnId ? {
+                    ...turn,
+                    stages: [...(turn.stages || []), stageData]
+                  } : turn
+                ));
+              }
+            } else if (streamMessage.type === 'response_chunk' && streamMessage.chunk) {
+              // Create or update response turn
+              if (!responseTurnId) {
+                responseTurnId = `response_${Date.now()}`;
+                const newResponseTurnId = responseTurnId;
+                setStreamingTurns(prev => [...prev, {
+                  id: newResponseTurnId,
+                  role: 'assistant',
+                  content: streamMessage.chunk || '',
+                  timestamp: new Date().toISOString(),
+                  isStreaming: true
+                }]);
+              } else {
+                setStreamingTurns(prev => prev.map(turn => 
+                  turn.id === responseTurnId ? {
+                    ...turn,
+                    content: turn.content + streamMessage.chunk
+                  } : turn
+                ));
+              }
+            } else if (streamMessage.type === 'response_complete' && streamMessage.content) {
+              assistantResponse = streamMessage.content;
+              
+              // Mark response turn as complete
+              setStreamingTurns(prev => prev.map(turn => 
+                turn.id === responseTurnId ? {
+                  ...turn,
+                  content: streamMessage.content || '',
+                  isStreaming: false
+                } : turn
+              ));
+            } else if (streamMessage.type === 'complete') {
+              setIsStreaming(false);
+              // Keep streaming turns visible as conversation history
+              // Don't add to backend conversation - streaming turns are the source of truth
+            } else if (streamMessage.type === 'error') {
+              console.error('Health Coach stream error:', streamMessage.error);
+              assistantResponse = 'Sorry, I encountered an error with the Health Coach. Please try again.';
+              setIsStreaming(false);
+              setStreamingTurns([]);
+            }
           });
-
-          assistantResponse = healthCoachResponse.response;
-          provenance = healthCoachResponse.provenance;
-
-          // Store provenance for display
-          if (provenance) {
-            const newProvenances = new Map(messageProvenances);
-            const messageId = `msg_${Date.now()}`;
-            newProvenances.set(messageId, provenance);
-            setMessageProvenances(newProvenances);
-          }
 
         } catch (error) {
           console.error('Health Coach error:', error);
           assistantResponse = 'Sorry, I encountered an error with the Health Coach. Please try again.';
+          setIsStreaming(false);
+          setStreamingTurns([]);
         }
       } else if (projectExists) {
         // Use traditional prompt testing
         const projectState = getProjectState();
-        const systemPrompt = projectState.projectData?.promptConfiguration?.systemPrompt;
+        const systemPrompt = (projectState.projectData as any)?.promptConfiguration?.systemPrompt;
         
         if (systemPrompt) {
           try {
@@ -166,14 +283,12 @@ export default function ChatPage() {
         assistantResponse = `I understand you said: "${content}". This is a placeholder response. Please configure your project first to test with your custom AI prompt.`;
       }
       
-      // Add assistant message
-      await appendTurn(conversationId, 'assistant', assistantResponse);
-      
-      // Reload conversation
-      await loadConversation();
-      
-      // Clear the message input
-      setCurrentMessage('');
+      // Only add assistant message for non-Health Coach responses
+      if (!useHealthCoach && assistantResponse) {
+        await appendTurn(conversationId, 'assistant', assistantResponse);
+        // Reload conversation for non-streaming responses
+        await loadConversation();
+      }
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
@@ -185,23 +300,39 @@ export default function ChatPage() {
     // Close drawer and populate the input field
     setIsDrawerOpen(false);
     setCurrentMessage(query);
+    
+    // Clear any previous streaming turns
+    setStreamingTurns([]);
+    
+    // Focus the input field so user can see the populated query
+    setTimeout(() => {
+      const inputElement = document.querySelector('textarea[placeholder*="message"]') as HTMLTextAreaElement;
+      if (inputElement) {
+        inputElement.focus();
+      }
+    }, 100);
   };
 
   const handleSavePrompt = () => {
     // Save prompt to project state
     const projectState = getProjectState();
-    const updatedState = {
-      ...projectState,
-      projectData: {
-        ...projectState.projectData,
-        promptConfiguration: {
-          systemPrompt,
-          description: 'User configured prompt',
-          version: '1.0'
-        }
-      }
-    };
-    updateProjectState(updatedState);
+    if (projectState.projectData) {
+      // We need to save the full project state, not use updateProjectState
+      // Since promptConfiguration is not part of ProjectFormData
+      const updatedState = {
+        ...projectState,
+        projectData: {
+          ...projectState.projectData,
+          promptConfiguration: {
+            systemPrompt,
+            description: 'User configured prompt',
+            version: '1.0'
+          }
+        } as any,
+        lastModified: new Date().toISOString()
+      };
+      localStorage.setItem('epistemic_me_project', JSON.stringify(updatedState));
+    }
   };
 
   const handleSystemPromptChange = (prompt: string) => {
@@ -296,25 +427,43 @@ export default function ChatPage() {
         </TabsList>
 
         <TabsContent value="chat" className="flex-1 flex flex-col mt-4">
-          <div className="flex-1 overflow-y-auto space-y-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
+          {/* Chat Messages - Fixed height with scroll */}
+          <div 
+            ref={chatContainerRef}
+            className="flex-1 overflow-y-auto space-y-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 mb-4" 
+            style={{maxHeight: 'calc(100vh - 250px)'}}
+          >
         {conversation?.turns.map((turn: Turn, index: number) => {
-          // Get provenance for assistant messages
-          const turnProvenance = turn.role === 'assistant' && useHealthCoach 
-            ? Array.from(messageProvenances.values())[Math.floor(index / 2)] // Rough mapping
-            : undefined;
-            
           return (
             <ChatBubble
               key={turn.id}
               role={turn.role}
               content={turn.content}
               timestamp={turn.created_at}
-              provenance={turnProvenance}
+              provenance={undefined}
             />
           );
         })}
         
-        {conversation?.turns.length === 0 && (
+        {/* Current streaming turns */}
+        {streamingTurns.map((turn) => (
+          turn.role === 'provenance' ? (
+            <ProvenanceBubble
+              key={turn.id}
+              stages={turn.stages || []}
+              timestamp={turn.timestamp}
+            />
+          ) : (
+            <ChatBubble
+              key={turn.id}
+              role="assistant"
+              content={turn.content}
+              timestamp={turn.timestamp}
+            />
+          )
+        ))}
+        
+        {conversation?.turns.length === 0 && streamingTurns.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 space-y-4">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-epistemic-cyan to-epistemic-cyan-dark flex items-center justify-center mb-4">
               {useHealthCoach ? (
@@ -363,10 +512,11 @@ export default function ChatPage() {
         )}
           </div>
 
-          <div className="mt-4">
+          {/* Fixed Input at Bottom */}
+          <div className="sticky bottom-0 bg-inherit pt-4">
             <MessageInput 
               onSend={handleSendMessage} 
-              disabled={isLoading}
+              disabled={isLoading || isStreaming}
               value={currentMessage}
               onChange={setCurrentMessage}
             />

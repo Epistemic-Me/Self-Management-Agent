@@ -1,0 +1,16 @@
+{
+  "dataset_dataset_1_20250626_052543_q1": {
+    "trace_id": "dataset_dataset_1_20250626_052543_q1",
+    "open_code_notes": "",
+    "failure_modes": {
+      "prompt_instruction_ignored": false
+    },
+    "timestamp": "2025-06-26T05:27:19.447436"
+  },
+  "dataset_dataset_1_20250626_052543_q2": {
+    "trace_id": "dataset_dataset_1_20250626_052543_q2",
+    "open_code_notes": "",
+    "failure_modes": {},
+    "timestamp": "2025-06-26T05:26:36.016922"
+  }
+}

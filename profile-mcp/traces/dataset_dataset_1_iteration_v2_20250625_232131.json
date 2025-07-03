@@ -1,0 +1,23 @@
+[
+  {
+    "id": "dataset_dataset_1_iteration_v2_20250625_232131_q1",
+    "query": "I'm having trouble logging into my account",
+    "response": "I can help you with that! Could you please provide more details about the issue you're experiencing? For example, are you receiving any error messages, or have you forgotten your password?",
+    "timestamp": "2025-06-25T23:21:32.487584",
+    "project_id": "dataset_dataset_1_iteration_v2"
+  },
+  {
+    "id": "dataset_dataset_1_iteration_v2_20250625_232131_q2",
+    "query": "Can you help me process a refund?",
+    "response": "I can certainly help guide you through the process of requesting a refund. However, the specific steps may vary depending on the retailer or service provider. Could you please provide me with more details about the purchase, such as where you bought it from, the reason for the refund, and any relevant order information?",
+    "timestamp": "2025-06-25T23:21:33.917583",
+    "project_id": "dataset_dataset_1_iteration_v2"
+  },
+  {
+    "id": "dataset_dataset_1_iteration_v2_20250625_232131_q3",
+    "query": "What's your return policy?",
+    "response": "Our return policy typically allows for returns within a specified period, usually 30 days from the date of purchase. Items must be in their original condition, unworn, and with all tags attached. Some items may be non-returnable, such as final sale items or personalized products. Please check the specific details on our website or contact customer support for more information based on your purchase.",
+    "timestamp": "2025-06-25T23:21:36.085586",
+    "project_id": "dataset_dataset_1_iteration_v2"
+  }
+]

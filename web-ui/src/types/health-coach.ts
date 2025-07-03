@@ -54,3 +54,22 @@ export interface ProvenanceDisplay {
   constraints: string[];
   reasoning: string;
 }
+
+export interface StreamMessage {
+  type: 'provenance' | 'response' | 'response_chunk' | 'response_complete' | 'final_provenance' | 'complete' | 'error';
+  stage?: string;
+  data?: any;
+  content?: string;
+  chunk?: string;
+  provenance?: Provenance;
+  session_id?: string;
+  error?: string;
+  timestamp: string;
+}
+
+export interface StreamingProvenance {
+  stage: string;
+  description: string;
+  data: any;
+  timestamp: string;
+}

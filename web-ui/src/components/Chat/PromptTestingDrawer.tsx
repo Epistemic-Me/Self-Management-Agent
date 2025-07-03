@@ -49,7 +49,7 @@ export function PromptTestingDrawer({
 
   if (!isOpen) return null;
 
-  const promptData = projectState.projectData?.promptConfiguration;
+  const promptData = (projectState.projectData as any)?.promptConfiguration;
   const projectSummary = getProjectSummary();
   
   // Health Coach sample queries by cohort and category
