@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -74,53 +74,7 @@ export function AxialCoding({
     console.log('First annotation:', Object.values(annotations)[0]);
   }, [annotations]);
 
-  // Load annotations if not provided
-  useEffect(() => {
-    const loadAnnotationsIfNeeded = async () => {
-      setIsLoading(true);
-      
-      // If no annotations provided, try to fetch them
-      if (!annotations || Object.keys(annotations).length === 0) {
-        console.log('No annotations provided, attempting to fetch for dataset:', datasetId);
-        try {
-          const response = await fetch(`/api/open-coding/annotations/${datasetId}`);
-          if (response.ok) {
-            const fetchedAnnotations = await response.json();
-            console.log('Fetched annotations:', fetchedAnnotations);
-            
-            // Process fetched annotations
-            if (fetchedAnnotations && Object.keys(fetchedAnnotations).length > 0) {
-              // Create a local copy to process
-              const tempAnnotations = fetchedAnnotations;
-              Object.values(tempAnnotations).forEach(annotation => {
-                if (annotation.open_code_notes?.trim()) {
-                  const notes = annotation.open_code_notes.toLowerCase();
-                  console.log('Found annotation with notes:', notes.substring(0, 100));
-                }
-              });
-              
-              // Extract patterns from fetched annotations
-              extractOpenCodePatterns(fetchedAnnotations);
-              return;
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching annotations:', error);
-        }
-      }
-      
-      // Use provided annotations
-      if (annotations && Object.keys(annotations).length > 0) {
-        extractOpenCodePatterns(annotations);
-      } else {
-        setIsLoading(false);
-      }
-    };
-    
-    loadAnnotationsIfNeeded();
-  }, [annotations, datasetId]);
-
-  const extractOpenCodePatterns = (annotationsToProcess?: Record<string, AnnotationData>) => {
+  const extractOpenCodePatterns = useCallback((annotationsToProcess?: Record<string, AnnotationData>) => {
     const patterns: Record<string, OpenCodePattern> = {};
     const phrases: Record<string, OpenCodePattern> = {};
     
@@ -193,7 +147,53 @@ export function AxialCoding({
     console.log('Extracted patterns:', meaningfulPatterns.length, meaningfulPatterns.map(p => p.pattern));
     setOpenCodePatterns(meaningfulPatterns);
     setIsLoading(false);
-  };
+  }, [annotations]);
+
+  // Load annotations if not provided
+  useEffect(() => {
+    const loadAnnotationsIfNeeded = async () => {
+      setIsLoading(true);
+      
+      // If no annotations provided, try to fetch them
+      if (!annotations || Object.keys(annotations).length === 0) {
+        console.log('No annotations provided, attempting to fetch for dataset:', datasetId);
+        try {
+          const response = await fetch(`/api/open-coding/annotations/${datasetId}`);
+          if (response.ok) {
+            const fetchedAnnotations = await response.json();
+            console.log('Fetched annotations:', fetchedAnnotations);
+            
+            // Process fetched annotations
+            if (fetchedAnnotations && Object.keys(fetchedAnnotations).length > 0) {
+              // Create a local copy to process
+              const tempAnnotations = fetchedAnnotations;
+              Object.values(tempAnnotations).forEach((annotation: any) => {
+                if (annotation.open_code_notes?.trim()) {
+                  const notes = annotation.open_code_notes.toLowerCase();
+                  console.log('Found annotation with notes:', notes.substring(0, 100));
+                }
+              });
+              
+              // Extract patterns from fetched annotations
+              extractOpenCodePatterns(fetchedAnnotations);
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching annotations:', error);
+        }
+      }
+      
+      // Use provided annotations
+      if (annotations && Object.keys(annotations).length > 0) {
+        extractOpenCodePatterns(annotations);
+      } else {
+        setIsLoading(false);
+      }
+    };
+    
+    loadAnnotationsIfNeeded();
+  }, [annotations, datasetId, extractOpenCodePatterns]);
 
   const createFailureMode = () => {
     if (!newFailureMode.label.trim()) return;

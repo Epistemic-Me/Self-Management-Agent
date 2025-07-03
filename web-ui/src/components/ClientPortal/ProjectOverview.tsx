@@ -150,7 +150,7 @@ export function ProjectOverview({ className = "" }: ProjectOverviewProps) {
         </Card>
 
         {/* AI Configuration */}
-        {projectData.promptConfiguration?.systemPrompt && (
+        {(projectData as any).promptConfiguration?.systemPrompt && (
           <Card className="bg-white/5 backdrop-blur-sm border border-white/10 p-6">
             <div className="flex items-center space-x-2 mb-4">
               <FileText className="h-5 w-5 text-purple-400" />
@@ -160,15 +160,15 @@ export function ProjectOverview({ className = "" }: ProjectOverviewProps) {
               <div>
                 <p className="text-sm font-medium text-slate-300 mb-1">System Prompt</p>
                 <p className="text-xs text-slate-400 bg-white/5 p-2 rounded border max-h-20 overflow-y-auto">
-                  {projectData.promptConfiguration.systemPrompt.substring(0, 200)}
-                  {projectData.promptConfiguration.systemPrompt.length > 200 ? '...' : ''}
+                  {(projectData as any).promptConfiguration.systemPrompt.substring(0, 200)}
+                  {(projectData as any).promptConfiguration.systemPrompt.length > 200 ? '...' : ''}
                 </p>
               </div>
-              {projectData.promptConfiguration.description && (
+              {(projectData as any).promptConfiguration.description && (
                 <div>
                   <p className="text-sm font-medium text-slate-300 mb-1">Description</p>
                   <p className="text-xs text-slate-400">
-                    {projectData.promptConfiguration.description}
+                    {(projectData as any).promptConfiguration.description}
                   </p>
                 </div>
               )}

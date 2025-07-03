@@ -1,0 +1,1369 @@
+{
+  "dataset": [
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_0_0",
+      "query": "As someone new to health habits, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_0_1",
+      "query": "I'm just starting my health journey, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_0_2",
+      "query": "I have no experience with this, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_0_3",
+      "query": "As a complete beginner, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_1_4",
+      "query": "As someone new to health habits, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_1_5",
+      "query": "I'm just starting my health journey, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_1_6",
+      "query": "I have no experience with this, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_1_7",
+      "query": "As a complete beginner, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_2_8",
+      "query": "As someone new to health habits, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_2_9",
+      "query": "I'm just starting my health journey, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_2_10",
+      "query": "I have no experience with this, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_2_11",
+      "query": "As a complete beginner, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_3_12",
+      "query": "As someone new to health habits, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_3_13",
+      "query": "I'm just starting my health journey, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_3_14",
+      "query": "I have no experience with this, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_3_15",
+      "query": "As a complete beginner, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_4_16",
+      "query": "As someone new to health habits, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_4_17",
+      "query": "I'm just starting my health journey, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_4_18",
+      "query": "I have no experience with this, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_sedentary_beginner_4_19",
+      "query": "As a complete beginner, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_0_20",
+      "query": "I exercise regularly and want to optimize, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_0_21",
+      "query": "I have good baseline habits but need guidance on what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_0_22",
+      "query": "As someone with decent health habits, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_0_23",
+      "query": "I'm already active but curious about what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_1_24",
+      "query": "I exercise regularly and want to optimize, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_1_25",
+      "query": "I have good baseline habits but need guidance on show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_1_26",
+      "query": "As someone with decent health habits, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_1_27",
+      "query": "I'm already active but curious about show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_2_28",
+      "query": "I exercise regularly and want to optimize, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_2_29",
+      "query": "I have good baseline habits but need guidance on what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_2_30",
+      "query": "As someone with decent health habits, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_2_31",
+      "query": "I'm already active but curious about what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_3_32",
+      "query": "I exercise regularly and want to optimize, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_3_33",
+      "query": "I have good baseline habits but need guidance on are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_3_34",
+      "query": "As someone with decent health habits, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_3_35",
+      "query": "I'm already active but curious about are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_4_36",
+      "query": "I exercise regularly and want to optimize, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_4_37",
+      "query": "I have good baseline habits but need guidance on what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_4_38",
+      "query": "As someone with decent health habits, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_health_enthusiast_4_39",
+      "query": "I'm already active but curious about what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "health_enthusiast",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "balanced_advice",
+        "practical_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_0_40",
+      "query": "I track my metrics and want to understand what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_0_41",
+      "query": "Based on my data analysis, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_0_42",
+      "query": "I'm experimenting with protocols and need info on what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_0_43",
+      "query": "As someone who measures everything, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_1_44",
+      "query": "I track my metrics and want to understand show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_1_45",
+      "query": "Based on my data analysis, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_1_46",
+      "query": "I'm experimenting with protocols and need info on show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_1_47",
+      "query": "As someone who measures everything, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_2_48",
+      "query": "I track my metrics and want to understand what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_2_49",
+      "query": "Based on my data analysis, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_2_50",
+      "query": "I'm experimenting with protocols and need info on what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_2_51",
+      "query": "As someone who measures everything, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_3_52",
+      "query": "I track my metrics and want to understand are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_3_53",
+      "query": "Based on my data analysis, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_3_54",
+      "query": "I'm experimenting with protocols and need info on are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_3_55",
+      "query": "As someone who measures everything, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_4_56",
+      "query": "I track my metrics and want to understand what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_4_57",
+      "query": "Based on my data analysis, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_4_58",
+      "query": "I'm experimenting with protocols and need info on what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_optimizer_4_59",
+      "query": "As someone who measures everything, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "optimizer",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "quantitative_data",
+        "metric_focus"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_0_60",
+      "query": "I'm interested in cutting-edge research on what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_0_61",
+      "query": "What are the latest experimental protocols for what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_0_62",
+      "query": "I want to try advanced optimization techniques for what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_0_63",
+      "query": "From a biohacking perspective, what does the research say about optimal training frequency for muscle growth?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_1_64",
+      "query": "I'm interested in cutting-edge research on show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_1_65",
+      "query": "What are the latest experimental protocols for show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_1_66",
+      "query": "I want to try advanced optimization techniques for show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_1_67",
+      "query": "From a biohacking perspective, show me meta-analyses on resistance training volume for hypertrophy",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_2_68",
+      "query": "I'm interested in cutting-edge research on what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_2_69",
+      "query": "What are the latest experimental protocols for what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_2_70",
+      "query": "I want to try advanced optimization techniques for what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_2_71",
+      "query": "From a biohacking perspective, what's the scientific evidence for high-intensity interval training benefits?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_3_72",
+      "query": "I'm interested in cutting-edge research on are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_3_73",
+      "query": "What are the latest experimental protocols for are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_3_74",
+      "query": "I want to try advanced optimization techniques for are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_3_75",
+      "query": "From a biohacking perspective, are there studies comparing strength training vs bodybuilding approaches?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_4_76",
+      "query": "I'm interested in cutting-edge research on what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_4_77",
+      "query": "What are the latest experimental protocols for what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_4_78",
+      "query": "I want to try advanced optimization techniques for what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_exercise_biohacker_4_79",
+      "query": "From a biohacking perspective, what does research show about rest periods between sets for strength gains?",
+      "expected_cohort": "biohacker",
+      "expected_category": "exercise",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "advanced_protocols",
+        "experimental_data"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_0_80",
+      "query": "As someone new to health habits, what do meta-analyses say about intermittent fasting for weight loss?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_0_81",
+      "query": "I'm just starting my health journey, what do meta-analyses say about intermittent fasting for weight loss?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_0_82",
+      "query": "I have no experience with this, what do meta-analyses say about intermittent fasting for weight loss?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_0_83",
+      "query": "As a complete beginner, what do meta-analyses say about intermittent fasting for weight loss?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_1_84",
+      "query": "As someone new to health habits, show me research on protein timing for muscle building",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_1_85",
+      "query": "I'm just starting my health journey, show me research on protein timing for muscle building",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_1_86",
+      "query": "I have no experience with this, show me research on protein timing for muscle building",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_1_87",
+      "query": "As a complete beginner, show me research on protein timing for muscle building",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_2_88",
+      "query": "As someone new to health habits, what does the evidence say about meal frequency and metabolism?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_2_89",
+      "query": "I'm just starting my health journey, what does the evidence say about meal frequency and metabolism?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_2_90",
+      "query": "I have no experience with this, what does the evidence say about meal frequency and metabolism?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_2_91",
+      "query": "As a complete beginner, what does the evidence say about meal frequency and metabolism?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_3_92",
+      "query": "As someone new to health habits, are there studies on the mediterranean diet and longevity?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_3_93",
+      "query": "I'm just starting my health journey, are there studies on the mediterranean diet and longevity?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_3_94",
+      "query": "I have no experience with this, are there studies on the mediterranean diet and longevity?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_3_95",
+      "query": "As a complete beginner, are there studies on the mediterranean diet and longevity?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_4_96",
+      "query": "As someone new to health habits, what's the research on vitamin d supplementation benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_4_97",
+      "query": "I'm just starting my health journey, what's the research on vitamin d supplementation benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_4_98",
+      "query": "I have no experience with this, what's the research on vitamin d supplementation benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_nutrition_sedentary_beginner_4_99",
+      "query": "As a complete beginner, what's the research on vitamin d supplementation benefits?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "evidence_research_sleep_sedentary_beginner_0_100",
+      "query": "As someone new to health habits, what does research show about optimal sleep duration for health?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "sleep",
+      "expected_intent": "evidence_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "plan_exercise_sedentary_beginner_0_101",
+      "query": "As someone new to health habits, help me design a 3-day strength training program",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "plan",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "plan_nutrition_sedentary_beginner_0_102",
+      "query": "As someone new to health habits, design a meal plan for muscle gain on a 2800 calorie diet",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "plan",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "plan_sleep_sedentary_beginner_0_103",
+      "query": "As someone new to health habits, help me design an optimal sleep schedule for shift work",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "sleep",
+      "expected_intent": "plan",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "task_exercise_sedentary_beginner_0_104",
+      "query": "As someone new to health habits, set up tracking for my daily step count",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "task",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "task_nutrition_sedentary_beginner_0_105",
+      "query": "As someone new to health habits, set up meal prep reminders for sunday",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "task",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "task_sleep_sedentary_beginner_0_106",
+      "query": "As someone new to health habits, set up reminders for my bedtime routine",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "sleep",
+      "expected_intent": "task",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "opinion_research_exercise_sedentary_beginner_0_107",
+      "query": "As someone new to health habits, what do fitness influencers say about training frequency?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "exercise",
+      "expected_intent": "opinion_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "opinion_research_nutrition_sedentary_beginner_0_108",
+      "query": "As someone new to health habits, what do nutrition experts think about keto vs low-fat diets?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "nutrition",
+      "expected_intent": "opinion_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    },
+    {
+      "id": "opinion_research_sleep_sedentary_beginner_0_109",
+      "query": "As someone new to health habits, what do sleep experts think about polyphasic sleep?",
+      "expected_cohort": "sedentary_beginner",
+      "expected_category": "sleep",
+      "expected_intent": "opinion_research",
+      "constraints_to_validate": [
+        "simple_language",
+        "foundational_only"
+      ],
+      "test_type": "routing_accuracy"
+    }
+  ],
+  "violation_tests": [
+    {
+      "id": "violation_anecdotal_1",
+      "query": "What does research say about protein timing?",
+      "expected_response_should_not_contain": [
+        "my friend",
+        "I know someone",
+        "personally"
+      ],
+      "constraint_type": "scope_boundary",
+      "violation_type": "anecdotal_evidence"
+    },
+    {
+      "id": "violation_jargon_1",
+      "query": "Explain muscle building for a beginner",
+      "cohort": "sedentary_beginner",
+      "expected_response_should_not_contain": [
+        "myofibrillar hypertrophy",
+        "sarcoplasmic",
+        "periodization"
+      ],
+      "constraint_type": "tone",
+      "violation_type": "technical_jargon"
+    }
+  ],
+  "metadata": {
+    "total_queries": 110,
+    "categories": [
+      "exercise",
+      "nutrition",
+      "sleep"
+    ],
+    "intents": [
+      "opinion_research",
+      "task",
+      "plan",
+      "evidence_research"
+    ],
+    "cohorts": [
+      "optimizer",
+      "biohacker",
+      "health_enthusiast",
+      "sedentary_beginner"
+    ]
+  }
+}

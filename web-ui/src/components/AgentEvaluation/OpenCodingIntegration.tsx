@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { X, ArrowRight, Download, Upload, Database, Link, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,48 +44,7 @@ export function OpenCodingIntegration({
   const [integrationProgress, setIntegrationProgress] = useState(0);
   const [integrationResults, setIntegrationResults] = useState<any>(null);
 
-  useEffect(() => {
-    loadDatasets();
-    generateMappingRules();
-  }, [agentHierarchy]);
-
-  const loadDatasets = async () => {
-    try {
-      // Mock data for now - replace with actual API call
-      setDatasets([
-        {
-          id: 'dataset_1',
-          name: 'Customer Support Evaluation',
-          description: 'Dataset for testing customer support responses',
-          query_count: 15,
-          execution_ids: ['exec_123', 'exec_124'],
-          failure_modes: [
-            { id: 'fm1', label: 'Incomplete Response', count: 5 },
-            { id: 'fm2', label: 'Inappropriate Tone', count: 3 },
-            { id: 'fm3', label: 'Missing Context Awareness', count: 2 }
-          ],
-          created_at: '2024-01-15'
-        },
-        {
-          id: 'dataset_2',
-          name: 'Health Coach Evaluation',
-          description: 'Health coaching conversation analysis',
-          query_count: 22,
-          execution_ids: ['exec_125', 'exec_126'],
-          failure_modes: [
-            { id: 'fm4', label: 'Hallucinated Citations', count: 8 },
-            { id: 'fm5', label: 'Oversimplification', count: 4 },
-            { id: 'fm6', label: 'Scope Creep', count: 6 }
-          ],
-          created_at: '2024-01-20'
-        }
-      ]);
-    } catch (error) {
-      console.error('Failed to load datasets:', error);
-    }
-  };
-
-  const generateMappingRules = () => {
+  const generateMappingRules = useCallback(() => {
     // Generate intelligent mapping rules based on hierarchy structure
     const rules: MappingRule[] = [];
     
@@ -129,6 +88,47 @@ export function OpenCodingIntegration({
     );
     
     setMappingRules(rules);
+  }, [agentHierarchy]);
+
+  useEffect(() => {
+    loadDatasets();
+    generateMappingRules();
+  }, [generateMappingRules]);
+
+  const loadDatasets = async () => {
+    try {
+      // Mock data for now - replace with actual API call
+      setDatasets([
+        {
+          id: 'dataset_1',
+          name: 'Customer Support Evaluation',
+          description: 'Dataset for testing customer support responses',
+          query_count: 15,
+          execution_ids: ['exec_123', 'exec_124'],
+          failure_modes: [
+            { id: 'fm1', label: 'Incomplete Response', count: 5 },
+            { id: 'fm2', label: 'Inappropriate Tone', count: 3 },
+            { id: 'fm3', label: 'Missing Context Awareness', count: 2 }
+          ],
+          created_at: '2024-01-15'
+        },
+        {
+          id: 'dataset_2',
+          name: 'Health Coach Evaluation',
+          description: 'Health coaching conversation analysis',
+          query_count: 22,
+          execution_ids: ['exec_125', 'exec_126'],
+          failure_modes: [
+            { id: 'fm4', label: 'Hallucinated Citations', count: 8 },
+            { id: 'fm5', label: 'Oversimplification', count: 4 },
+            { id: 'fm6', label: 'Scope Creep', count: 6 }
+          ],
+          created_at: '2024-01-20'
+        }
+      ]);
+    } catch (error) {
+      console.error('Failed to load datasets:', error);
+    }
   };
 
   const handleIntegration = async () => {

@@ -84,6 +84,32 @@ services:
       - ./em-mcp:/app
       - /app/__pycache__
 
+  health-coach-mcp:
+    build: ./health-coach-mcp
+    ports:
+      - "8130:8130"
+    env_file:
+      - ./health-coach-mcp/.env
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@postgres:5432/health_coach
+      - REDIS_URL=redis://redis:6379/3
+      - PROFILE_MCP_URL=http://profile-mcp:8010
+      - EM_MCP_URL=http://em-mcp:8120
+      - DD_MCP_URL=http://dd-mcp:8090
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+      - profile-mcp
+      - em-mcp
+      - dd-mcp
+    networks:
+      - sma-net
+    volumes:
+      - ./health-coach-mcp:/app
+      - /app/__pycache__
+
   user-setup:
     build: ./profile-mcp  # Reuse profile-mcp image for Python environment
     environment:

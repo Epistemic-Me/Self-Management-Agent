@@ -87,11 +87,9 @@ describe('Datasets Page', () => {
 
   it('displays loading state while fetching datasets', () => {
     // Intercept with delay to see loading state
-    cy.intercept('GET', '/api/datasets', (req) => {
-      req.reply((res) => {
-        res.delay(1000);
-        res.send({ datasets: [] });
-      });
+    cy.intercept('GET', '/api/datasets', {
+      delay: 1000,
+      body: { datasets: [] }
     }).as('getDatasetsSlow');
     
     cy.visit('/datasets');

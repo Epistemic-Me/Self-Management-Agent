@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchical Constraint Architecture - Agent Builder</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Color System - Matching mockup */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8f9fa;
+            --bg-card-selected: #e8f2ff;
+            
+            --text-primary: #1a1a1a;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            
+            --accent-primary: #3b82f6;
+            --accent-secondary: #06b6d4;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            
+            --border-color: #e5e7eb;
+            --border-active: #3b82f6;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-glow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            font-size: 14px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            padding: 2rem 2rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 400;
+        }
+
+        /* Main Layout */
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .tree-panel {
+            flex: 1;
+            background: var(--bg-primary);
+            overflow-y: auto;
+            padding: 1.5rem;
+            min-width: 0;
+        }
+
+        .details-panel {
+            width: 420px;
+            background: var(--bg-primary);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Tree Structure */
+        .tree-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .tree-header svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent-primary);
+            stroke-width: 1.5;
+        }
+
+        .tree {
+            position: relative;
+        }
+
+        .node {
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .node-wrapper {
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+        }
+
+        /* Tree Lines */
+        .node-line {
+            position: absolute;
+            left: -20px;
+            top: 0;
+            bottom: 0;
+            width: 20px;
+        }
+
+        .node-line::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20px;
+            width: 20px;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .node-line.has-siblings::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20px;
+            bottom: -20px;
+            width: 1px;
+            background: var(--border-color);
+        }
+
+        /* Node Card */
+        .node-card {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .node-card.selected {
+            background: var(--bg-card-selected);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .node-card.selected::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-primary);
+        }
+
+        /* Node Header with improved z-index handling */
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .node-icon {
+            display: none; /* Hide emoji icons per mockup */
+        }
+
+        .node-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .node-title {
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .node-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-tertiary);
+            margin-top: 0.125rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 400;
+        }
+
+        /* Node Metrics */
+        .node-metrics {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .metric-value {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metric-progress {
+            display: none; /* Hide progress bars per mockup */
+        }
+
+        .metric-text {
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .metric-text.success {
+            color: var(--accent-success);
+        }
+
+        .metric-text.warning {
+            color: var(--accent-warning);
+        }
+
+        .metric-text.danger {
+            color: var(--accent-danger);
+        }
+
+        /* Node Badge */
+        .node-badge {
+            position: absolute;
+            top: 0.875rem;
+            right: 0.875rem;
+            padding: 0.125rem 0;
+            background: transparent;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Expand/Collapse Button */
+        .expand-btn {
+            width: 16px;
+            height: 16px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-right: 0.25rem;
+            flex-shrink: 0;
+            color: var(--text-tertiary);
+        }
+
+        .expand-btn:hover {
+            color: var(--text-secondary);
+        }
+
+        .expand-btn svg {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.15s ease;
+        }
+
+        .expand-btn.collapsed svg {
+            transform: rotate(-90deg);
+        }
+
+        /* Children Container */
+        .children {
+            margin-left: 2.5rem;
+            position: relative;
+        }
+
+        .children::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: -20px;
+            bottom: 10px;
+            width: 1px;
+            background: var(--border-color);
+        }
+
+        .collapsed .children {
+            display: none;
+        }
+
+        /* Details Panel */
+        .details-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .details-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .details-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .details-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-tertiary);
+        }
+
+        .details-empty svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Detail Sections */
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .section-header svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+            stroke-width: 1.5;
+        }
+
+        .detail-content {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        /* Constraints */
+        .constraint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .constraint-tag {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.25rem;
+            padding: 0.5rem 0;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            font-size: 0.875rem;
+            color: var(--accent-primary);
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .constraint-tag:last-child {
+            border-bottom: none;
+        }
+
+        .constraint-tag:hover {
+            color: var(--accent-primary);
+            background: var(--bg-tertiary);
+            padding-left: 0.5rem;
+        }
+
+        /* Failure Modes */
+        .failure-mode {
+            padding: 1rem 0;
+            background: transparent;
+            border-radius: 0;
+            margin-bottom: 0;
+            border: none;
+            border-bottom: 1px solid var(--bg-tertiary);
+            transition: all 0.15s ease;
+        }
+
+        .failure-mode:last-child {
+            border-bottom: none;
+        }
+
+        .failure-mode:hover {
+            background: var(--bg-tertiary);
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .failure-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .failure-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .failure-severity {
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .failure-severity.high {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-danger);
+        }
+
+        .failure-severity.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-warning);
+        }
+
+        .failure-description {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .failure-mitigation {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        /* Evaluation Metrics */
+        .eval-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .eval-metric:last-child {
+            border-bottom: none;
+        }
+
+        .eval-metric:first-child {
+            padding-top: 0;
+        }
+
+        .eval-metric-name {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        .eval-metric-value {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .eval-metric-bar {
+            width: 120px;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .eval-metric-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            background: var(--accent-success);
+        }
+
+        .eval-metric-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: right;
+            color: var(--text-primary);
+        }
+
+        /* Tier Info Tooltip */
+        .tier-info {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            cursor: help;
+            position: relative;
+            transition: all 0.15s ease;
+            font-weight: 500;
+            z-index: 10;
+        }
+
+        .tier-info:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .tier-tooltip {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            width: 260px;
+            display: none;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            pointer-events: none;
+        }
+
+        .tier-info:hover .tier-tooltip {
+            display: block;
+            animation: fadeIn 0.15s ease;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(5px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(-50%) translateY(0); 
+            }
+        }
+
+        .tier-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--border-color);
+        }
+
+        .tier-tooltip h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tier-tooltip p {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .tier-tooltip .example {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-style: italic;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+            margin: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .tree-panel {
+                height: 50vh;
+            }
+
+            .details-panel {
+                width: 100%;
+                height: 50vh;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .node-metrics {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .children {
+                margin-left: 1.5rem;
+            }
+        }
+
+        /* Utility Classes */
+        .text-success { color: var(--accent-success); }
+        .text-warning { color: var(--accent-warning); }
+        .text-danger { color: var(--accent-danger); }
+        .text-primary { color: var(--accent-primary); }
+        .text-secondary { color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Hierarchical Constraint Architecture</h1>
+            <p>Agent Builder & Evaluation System - Click any node to explore constraints and metrics</p>
+        </div>
+
+        <div class="main-content">
+            <div class="tree-panel">
+                <div class="tree-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h6v6h-6zM9 6h6M6 15v-6h3M15 18v-3M18 15h-3"/>
+                    </svg>
+                    Evaluation Hierarchy
+                </div>
+                <div id="tree" class="tree"></div>
+            </div>
+
+            <div class="details-panel">
+                <div id="details-content">
+                    <div class="details-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <p>Select a node to view details</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced data structure with richer metadata
+        const agentStructure = {
+            id: 'root',
+            name: 'AI Health Coach',
+            type: 'root',
+            icon: '🏥',
+            metrics: { success: 0.92, coverage: 0.85 },
+            children: [
+                {
+                    id: 'health-enthusiast',
+                    name: 'Health Enthusiast',
+                    type: 'cohort',
+                    icon: '👥',
+                    description: 'Regular exercise, decent sleep patterns',
+                    metrics: { success: 0.89, users: 1250 },
+                    constraints: ['Regular activity baseline', 'Intermediate knowledge', 'Goal-oriented mindset'],
+                    children: [
+                        {
+                            id: 'he-evidence',
+                            name: 'Evidence Research',
+                            type: 'intent',
+                            icon: '🎯',
+                            description: 'Scientific literature analysis',
+                            metrics: { success: 0.91, queries: 3400 },
+                            constraints: ['Peer-reviewed sources only', 'Statistical literacy assumed', 'Academic tone preferred'],
+                            failureModes: [
+                                {
+                                    name: 'Hallucinated Citations',
+                                    description: 'Inventing or misrepresenting research',
+                                    severity: 'high',
+                                    mitigation: 'Reference validation against PubMed'
+                                },
+                                {
+                                    name: 'Oversimplification',
+                                    description: 'Losing nuance in translation',
+                                    severity: 'medium',
+                                    mitigation: 'Complexity scoring algorithm'
+                                }
+                            ],
+                            children: [
+                                {
+                                    id: 'he-ev-exercise',
+                                    name: 'Exercise',
+                                    type: 'category',
+                                    icon: '📂',
+                                    metrics: { success: 0.93, queries: 1200 },
+                                    children: [
+                                        {
+                                            id: 'he-ev-ex-meta',
+                                            name: 'Meta-Analysis Review',
+                                            type: 'subintent',
+                                            icon: '🔧',
+                                            description: 'Synthesize exercise meta-analyses',
+                                            metrics: { success: 0.95, coverage: 0.88, queries: 450 },
+                                            constraints: [
+                                                'Only peer-reviewed meta-analyses from last 10 years',
+                                                'Must include effect sizes with confidence intervals',
+                                                'Heterogeneity assessment (I²) required',
+                                                'Quality assessment using GRADE framework',
+                                                'Minimum 5 included studies per meta-analysis',
+                                                'Focus on aggregate findings only'
+                                            ],
+                                            failureModes: [
+                                                {
+                                                    name: 'Hallucinated Study Citation',
+                                                    description: 'Inventing or misrepresenting meta-analyses',
+                                                    severity: 'high',
+                                                    mitigation: 'Reference validation against PubMed'
+                                                },
+                                                {
+                                                    name: 'Individual Study Confusion',
+                                                    description: 'Citing single studies as meta-analyses',
+                                                    severity: 'medium',
+                                                    mitigation: 'Explicit prompt constraints'
+                                                },
+                                                {
+                                                    name: 'Overstated Conclusions',
+                                                    description: 'Claims beyond evidence support',
+                                                    severity: 'high',
+                                                    mitigation: 'Conclusion scope validator'
+                                                }
+                                            ],
+                                            evaluationMetrics: {
+                                                'Citation Accuracy': 0.95,
+                                                'Statistical Correctness': 0.93,
+                                                'Scope Adherence': 0.91,
+                                                'Tone Appropriateness': 0.94
+                                            },
+                                            sampleQueries: [
+                                                'What do meta-analyses say about training frequency?',
+                                                'Summarize evidence on HIIT vs steady-state cardio',
+                                                'Optimal volume for strength gains according to research'
+                                            ]
+                                        },
+                                        {
+                                            id: 'he-ev-ex-rct',
+                                            name: 'RCT Analysis',
+                                            type: 'subintent',
+                                            icon: '🔧',
+                                            description: 'Analyze specific RCTs',
+                                            metrics: { success: 0.91, coverage: 0.82, queries: 280 },
+                                            constraints: [
+                                                'Single study focus only',
+                                                'Methods critique required',
+                                                'Limitation discussion mandatory',
+                                                'No generalization beyond study population'
+                                            ],
+                                            failureModes: [
+                                                {
+                                                    name: 'Overgeneralization',
+                                                    description: 'Extending findings beyond study scope',
+                                                    severity: 'high',
+                                                    mitigation: 'Scope boundary enforcement'
+                                                },
+                                                {
+                                                    name: 'Missing Methodology Flaws',
+                                                    description: 'Failing to identify study limitations',
+                                                    severity: 'medium',
+                                                    mitigation: 'Methodology checklist validation'
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            id: 'he-ev-ex-bio',
+                                            name: 'Biohacker Experiments',
+                                            type: 'subintent',
+                                            icon: '🔧',
+                                            description: 'Evaluate n=1 experiments',
+                                            metrics: { success: 0.87, coverage: 0.75, queries: 180 },
+                                            constraints: [
+                                                'Acknowledge n=1 limitations prominently',
+                                                'No medical advice whatsoever',
+                                                'Context-specific only',
+                                                'Safety warnings required'
+                                            ],
+                                            failureModes: [
+                                                {
+                                                    name: 'Presenting as Generalizable',
+                                                    description: 'Treating n=1 as broadly applicable',
+                                                    severity: 'high',
+                                                    mitigation: 'Disclaimer enforcement'
+                                                },
+                                                {
+                                                    name: 'Ignoring Safety Concerns',
+                                                    description: 'Missing potential risks',
+                                                    severity: 'high',
+                                                    mitigation: 'Safety checklist validation'
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: 'he-ev-nutrition',
+                                    name: 'Nutrition',
+                                    type: 'category',
+                                    icon: '📂',
+                                    metrics: { success: 0.90, queries: 1100 },
+                                    children: [
+                                        {
+                                            id: 'he-ev-nu-macro',
+                                            name: 'Macronutrient Research',
+                                            type: 'subintent',
+                                            icon: '🔧',
+                                            metrics: { success: 0.92, coverage: 0.90, queries: 600 },
+                                            constraints: [
+                                                'Evidence-based ratios only',
+                                                'Population-specific recommendations',
+                                                'Avoid diet tribalism'
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: 'he-ev-sleep',
+                                    name: 'Sleep',
+                                    type: 'category',
+                                    icon: '📂',
+                                    metrics: { success: 0.88, queries: 1100 },
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'he-plan',
+                            name: 'Planning',
+                            type: 'intent',
+                            icon: '🎯',
+                            description: 'Habit change planning',
+                            metrics: { success: 0.86, queries: 2100 },
+                            constraints: ['Incremental changes', 'Personalized to cohort', 'Behavioral science-based'],
+                            children: []
+                        },
+                        {
+                            id: 'he-task',
+                            name: 'Task Automation',
+                            type: 'intent',
+                            icon: '🎯',
+                            description: 'Automated reminders',
+                            metrics: { success: 0.94, queries: 1800 },
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    id: 'beginner',
+                    name: 'Sedentary Beginner',
+                    type: 'cohort',
+                    icon: '👥',
+                    description: 'No regular health habits',
+                    metrics: { success: 0.85, users: 2100 },
+                    constraints: ['Simple language', 'Low barrier to entry', 'Focus on habit formation'],
+                    children: []
+                },
+                {
+                    id: 'optimizer',
+                    name: 'Optimizer',
+                    type: 'cohort',
+                    icon: '👥',
+                    description: 'Tracking metrics, experimenting',
+                    metrics: { success: 0.91, users: 800 },
+                    constraints: ['Data-driven approach', 'Advanced protocols', 'Quantified self mindset'],
+                    children: []
+                }
+            ]
+        };
+
+        // Tier information
+        const tierInfo = {
+            cohort: {
+                icon: '👥',
+                title: 'Cohort',
+                description: 'User segments based on current habits and knowledge level. Defines baseline capabilities and appropriate complexity.',
+                example: 'Example: "Health Enthusiast" - Regular exerciser with intermediate knowledge'
+            },
+            intent: {
+                icon: '🎯',
+                title: 'Intent Class',
+                description: 'High-level user goals that cut across domains. Determines the type of interaction and expected outcome.',
+                example: 'Example: "Evidence Research" - Seeking scientific backing for decisions'
+            },
+            category: {
+                icon: '📂',
+                title: 'Category',
+                description: 'Domain-specific divisions of health. Each category has unique data sources and evaluation criteria.',
+                example: 'Example: "Exercise" - Physical activity protocols and research'
+            },
+            subintent: {
+                icon: '🔧',
+                title: 'Sub-intent',
+                description: 'Granular, specific handlers with precise constraints. Each has its own prompt and evaluation logic.',
+                example: 'Example: "Meta-Analysis Review" - Synthesize multiple exercise studies'
+            }
+        };
+
+        let selectedNode = null;
+
+        // Helper function to get metric status
+        function getMetricStatus(value) {
+            if (value >= 0.9) return 'success';
+            if (value >= 0.8) return 'warning';
+            return 'danger';
+        }
+
+        // Create node element
+        function createNodeElement(node, level = 0, isLastChild = false, parentHasMoreSiblings = false) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = 'node';
+            
+            const nodeWrapper = document.createElement('div');
+            nodeWrapper.className = 'node-wrapper';
+            
+            // Add tree line for non-root nodes
+            if (level > 0) {
+                const nodeLine = document.createElement('div');
+                nodeLine.className = 'node-line';
+                if (!isLastChild || (node.children && node.children.length > 0)) {
+                    nodeLine.classList.add('has-siblings');
+                }
+                nodeWrapper.appendChild(nodeLine);
+            }
+            
+            // Add expand/collapse button if has children
+            if (node.children && node.children.length > 0) {
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'expand-btn';
+                expandBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                `;
+                expandBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    nodeDiv.classList.toggle('collapsed');
+                    expandBtn.classList.toggle('collapsed');
+                };
+                nodeWrapper.appendChild(expandBtn);
+            }
+            
+            // Create node card
+            const nodeCard = document.createElement('div');
+            nodeCard.className = 'node-card';
+            nodeCard.onclick = () => selectNode(node, nodeCard);
+            
+            // Node header
+            const nodeHeader = document.createElement('div');
+            nodeHeader.className = 'node-header';
+            
+            const nodeIcon = document.createElement('div');
+            nodeIcon.className = 'node-icon';
+            nodeIcon.textContent = node.icon || '📄';
+            nodeHeader.appendChild(nodeIcon);
+            
+            const nodeInfo = document.createElement('div');
+            nodeInfo.className = 'node-info';
+            
+            const nodeTitle = document.createElement('div');
+            nodeTitle.className = 'node-title';
+            
+            const titleText = document.createElement('span');
+            titleText.textContent = node.name;
+            nodeTitle.appendChild(titleText);
+            
+            // Add tier info
+            if (node.type && node.type !== 'root' && tierInfo[node.type]) {
+                const infoBtn = document.createElement('span');
+                infoBtn.className = 'tier-info';
+                infoBtn.innerHTML = '?';
+                
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tier-tooltip';
+                
+                const tier = tierInfo[node.type];
+                tooltip.innerHTML = `
+                    <h4>${tier.icon} ${tier.title}</h4>
+                    <p>${tier.description}</p>
+                    <p class="example">${tier.example}</p>
+                `;
+                
+                infoBtn.appendChild(tooltip);
+                nodeTitle.appendChild(infoBtn);
+            }
+            
+            nodeInfo.appendChild(nodeTitle);
+            
+            if (node.description) {
+                const nodeSubtitle = document.createElement('div');
+                nodeSubtitle.className = 'node-subtitle';
+                nodeSubtitle.textContent = node.description;
+                nodeInfo.appendChild(nodeSubtitle);
+            }
+            
+            nodeHeader.appendChild(nodeInfo);
+            nodeCard.appendChild(nodeHeader);
+            
+            // Node badge
+            if (node.metrics && (node.metrics.users || node.metrics.queries)) {
+                const badge = document.createElement('div');
+                badge.className = 'node-badge';
+                if (node.metrics.users) {
+                    badge.textContent = `${node.metrics.users.toLocaleString()} users`;
+                } else if (node.metrics.queries) {
+                    badge.textContent = `${node.metrics.queries.toLocaleString()} queries`;
+                }
+                nodeCard.appendChild(badge);
+            }
+            
+            // Node metrics
+            if (node.metrics && (node.metrics.success !== undefined || node.metrics.coverage !== undefined)) {
+                const nodeMetrics = document.createElement('div');
+                nodeMetrics.className = 'node-metrics';
+                
+                if (node.metrics.success !== undefined) {
+                    const metric = createMetricElement('Success', node.metrics.success);
+                    nodeMetrics.appendChild(metric);
+                }
+                
+                if (node.metrics.coverage !== undefined) {
+                    const metric = createMetricElement('Coverage', node.metrics.coverage);
+                    nodeMetrics.appendChild(metric);
+                }
+                
+                nodeCard.appendChild(nodeMetrics);
+            }
+            
+            nodeWrapper.appendChild(nodeCard);
+            nodeDiv.appendChild(nodeWrapper);
+            
+            // Add children
+            if (node.children && node.children.length > 0) {
+                const childrenDiv = document.createElement('div');
+                childrenDiv.className = 'children';
+                node.children.forEach((child, index) => {
+                    const isLast = index === node.children.length - 1;
+                    childrenDiv.appendChild(createNodeElement(child, level + 1, isLast, !isLast));
+                });
+                nodeDiv.appendChild(childrenDiv);
+            }
+            
+            return nodeDiv;
+        }
+
+        // Create metric element
+        function createMetricElement(label, value) {
+            const metric = document.createElement('div');
+            metric.className = 'metric';
+            
+            const metricLabel = document.createElement('span');
+            metricLabel.className = 'metric-label';
+            metricLabel.textContent = label + ':';
+            metric.appendChild(metricLabel);
+            
+            const metricText = document.createElement('span');
+            metricText.className = `metric-text ${getMetricStatus(value)}`;
+            metricText.textContent = `${Math.round(value * 100)}%`;
+            metric.appendChild(metricText);
+            
+            return metric;
+        }
+
+        // Select node
+        function selectNode(node, element) {
+            // Remove previous selection
+            document.querySelectorAll('.node-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection
+            element.classList.add('selected');
+            selectedNode = node;
+            
+            // Update details panel
+            updateDetailsPanel(node);
+        }
+
+        // Update details panel
+        function updateDetailsPanel(node) {
+            const detailsContent = document.getElementById('details-content');
+            
+            let html = `
+                <div class="details-header">
+                    <h2 class="details-title">${node.name}</h2>
+                    ${node.description ? `<p class="details-subtitle">${node.description}</p>` : ''}
+                </div>
+            `;
+            
+            // Add tier-specific information
+            if (node.type && node.type !== 'root' && tierInfo[node.type]) {
+                const tier = tierInfo[node.type];
+                html += `
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            ${tier.title} Definition
+                        </div>
+                        <div class="detail-content">
+                            <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.75rem;">${tier.description}</p>
+                            <p style="color: var(--text-tertiary); font-size: 0.8125rem; font-style: italic;">${tier.example}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Overview section
+            if (node.overview) {
+                html += `
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            Overview
+                        </div>
+                        <div class="detail-content">
+                            <p style="color: var(--text-secondary); line-height: 1.6;">${node.overview}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Constraints section
+            if (node.constraints && node.constraints.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                            Constraints
+                        </div>
+                        <div class="detail-content">
+                            <div class="constraint-list">
+                                ${node.constraints.map(c => `<span class="constraint-tag">${c}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Failure modes section
+            if (node.failureModes && node.failureModes.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            Failure Modes
+                        </div>
+                        <div class="detail-content">
+                            ${node.failureModes.map(fm => `
+                                <div class="failure-mode">
+                                    <div class="failure-header">
+                                        <span class="failure-name">${fm.name}</span>
+                                        <span class="failure-severity ${fm.severity}">${fm.severity.toUpperCase()}</span>
+                                    </div>
+                                    <p class="failure-description">${fm.description}</p>
+                                    <div class="failure-mitigation">
+                                        <span>Mitigation: ${fm.mitigation}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Evaluation metrics section
+            if (node.evaluationMetrics) {
+                html += `
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                            Evaluation Metrics
+                        </div>
+                        <div class="detail-content">
+                            ${Object.entries(node.evaluationMetrics).map(([name, value]) => {
+                                const status = getMetricStatus(value);
+                                return `
+                                    <div class="eval-metric">
+                                        <span class="eval-metric-name">${name}</span>
+                                        <div class="eval-metric-value">
+                                            <div class="eval-metric-bar">
+                                                <div class="eval-metric-fill ${status}" style="width: ${value * 100}%"></div>
+                                            </div>
+                                            <span class="eval-metric-text ${status}">${Math.round(value * 100)}%</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Sample queries section
+            if (node.sampleQueries && node.sampleQueries.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Sample Queries
+                        </div>
+                        <div class="detail-content">
+                            ${node.sampleQueries.map(q => `
+                                <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--bg-tertiary); color: var(--text-secondary); font-style: italic;">
+                                    "${q}"
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            detailsContent.innerHTML = html;
+        }
+
+        // Initialize tree
+        document.getElementById('tree').appendChild(createNodeElement(agentStructure));
+    </script>
+</body>
+</html>

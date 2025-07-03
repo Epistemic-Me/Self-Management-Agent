@@ -4,14 +4,17 @@ import { cn } from '@/lib/utils';
 import { Bot, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { ProvenanceDisplay } from '@/components/Chat/ProvenanceDisplay';
+import type { Provenance } from '@/types/health-coach';
 
 interface ChatBubbleProps {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
+  provenance?: Provenance;
 }
 
-export function ChatBubble({ role, content, timestamp }: ChatBubbleProps) {
+export function ChatBubble({ role, content, timestamp, provenance }: ChatBubbleProps) {
   const isUser = role === 'user';
   const isSystem = role === 'system';
 
@@ -46,7 +49,8 @@ export function ChatBubble({ role, content, timestamp }: ChatBubbleProps) {
                 h2: ({children}) => <h2 className="text-base font-semibold mb-2">{children}</h2>,
                 h3: ({children}) => <h3 className="text-sm font-medium mb-1">{children}</h3>,
                 p: ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
-                code: ({children, inline}) => {
+                code: ({children, ...props}: any) => {
+                  const inline = props.inline || !props.className;
                   return inline 
                     ? <code className="bg-slate-800/50 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-600">{children}</code>
                     : <code className="bg-slate-800/50 px-1.5 py-0.5 rounded text-xs font-mono border border-slate-600">{children}</code>;
@@ -71,7 +75,19 @@ export function ChatBubble({ role, content, timestamp }: ChatBubbleProps) {
         )}>
           {new Date(timestamp).toLocaleTimeString()}
         </div>
+        
+        {/* Show provenance for assistant messages */}
+        {!isUser && !isSystem && provenance && (
+          <ProvenanceDisplay provenance={provenance} compact />
+        )}
       </div>
+      
+      {/* Expanded provenance for assistant messages */}
+      {!isUser && !isSystem && provenance && (
+        <div className="w-full">
+          <ProvenanceDisplay provenance={provenance} />
+        </div>
+      )}
 
       {isUser && (
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center">

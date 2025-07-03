@@ -1,0 +1,24 @@
+{
+  "dataset_dataset_1_20250626_000228_q1": {
+    "trace_id": "dataset_dataset_1_20250626_000228_q1",
+    "open_code_notes": "",
+    "failure_modes": {
+      "incomplete_response": true
+    },
+    "timestamp": "2025-06-26T00:02:48.875083"
+  },
+  "dataset_dataset_1_20250626_000228_q2": {
+    "trace_id": "dataset_dataset_1_20250626_000228_q2",
+    "open_code_notes": "This is not good",
+    "failure_modes": {
+      "missing_context_awareness": true
+    },
+    "timestamp": "2025-06-26T00:02:57.048196"
+  },
+  "dataset_dataset_1_20250626_000228_q3": {
+    "trace_id": "dataset_dataset_1_20250626_000228_q3",
+    "open_code_notes": "Too many words!",
+    "failure_modes": {},
+    "timestamp": "2025-06-26T00:03:02.874189"
+  }
+}
