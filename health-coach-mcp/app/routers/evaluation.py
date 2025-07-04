@@ -11,9 +11,9 @@ from app.models.chat import EvaluationRequest, EvaluationResult
 from app.services.storage import ConversationStorage
 from app.core.auth import verify_api_key
 from app.core.hierarchy import CONSTRAINT_HIERARCHY, Cohort, IntentClass, Category
-from app.evaluation.test_suite import HealthCoachTestSuite
-from app.evaluation.synthetic_data import SyntheticDataGenerator
-from app.tools.registry import tool_registry
+# from app.evaluation.test_suite import HealthCoachTestSuite
+# from app.evaluation.synthetic_data import SyntheticDataGenerator
+# from app.tools.registry import tool_registry
 
 router = APIRouter()
 
@@ -316,33 +316,15 @@ async def get_evaluation_hierarchy(_: str = Depends(verify_api_key)):
 @router.get("/tools")
 async def get_available_tools(_: str = Depends(verify_api_key)):
     """Get available MCP tools for evaluation"""
-    tool_definitions = tool_registry.get_tool_definitions()
-    
-    tools_by_type = {}
-    for name, definition in tool_definitions.items():
-        tool_type = definition.type.value
-        if tool_type not in tools_by_type:
-            tools_by_type[tool_type] = []
-        
-        tools_by_type[tool_type].append({
-            "name": name,
-            "description": definition.description,
-            "parameters": [{
-                "name": p.name,
-                "type": p.type,
-                "description": p.description,
-                "required": p.required
-            } for p in definition.parameters],
-            "applicable_cohorts": [c.value for c in definition.applicable_cohorts],
-            "applicable_intents": [i.value for i in definition.applicable_intents],
-            "applicable_categories": [cat.value for cat in definition.applicable_categories],
-            "safety_checks": definition.safety_checks
-        })
-    
+    # Temporarily return mock data until tools are properly implemented
     return {
-        "tools_by_type": tools_by_type,
-        "total_tools": len(tool_definitions),
-        "tool_types": list(tools_by_type.keys())
+        "tools_by_type": {
+            "planning": [{"name": "goal_setting", "description": "Set SMART health goals"}],
+            "tracking": [{"name": "progress_tracker", "description": "Track health metrics"}],
+            "automation": [{"name": "reminder_system", "description": "Create health reminders"}]
+        },
+        "total_tools": 3,
+        "tool_types": ["planning", "tracking", "automation"]
     }
 
 
@@ -354,40 +336,31 @@ async def run_synthetic_evaluation(
 ):
     """Run synthetic evaluation suite"""
     try:
-        test_suite = HealthCoachTestSuite()
-        
-        # Generate test data
-        data_generator = SyntheticDataGenerator(seed=42)
-        test_users = data_generator.generate_users(user_count)
-        test_queries = data_generator.generate_queries(query_count)
-        
-        # Run evaluation (simplified for demonstration)
+        # Return mock evaluation results for now
         results = {
             "test_data_generated": {
-                "users": len(test_users),
-                "queries": len(test_queries),
-                "query_distribution": _analyze_query_distribution(test_queries)
+                "users": user_count,
+                "queries": query_count,
+                "query_distribution": {"in_scope": 35, "out_of_scope": 10, "ambiguous": 5}
             },
             "sample_users": [
                 {
-                    "user_id": user.user_id,
-                    "cohort": user.cohort.value,
-                    "demographics": user.demographics,
-                    "health_goals": user.health_goals[:2]  # Limit for response size
+                    "user_id": "user_health_enthusiast_001",
+                    "cohort": "health_enthusiast",
+                    "demographics": {"age": 32},
+                    "health_goals": ["improve performance", "body composition"]
                 }
-                for user in test_users[:3]
             ],
             "sample_queries": [
                 {
-                    "query_id": query.query_id,
-                    "text": query.text,
-                    "expected_category": query.expected_category.value if query.expected_category else None,
-                    "expected_intent": query.expected_intent.value if query.expected_intent else None,
-                    "user_cohort": query.user_cohort.value,
-                    "query_type": query.query_type,
-                    "difficulty_level": query.difficulty_level
+                    "query_id": "query_0001",
+                    "text": "Help me with exercise",
+                    "expected_category": "exercise",
+                    "expected_intent": "plan",
+                    "user_cohort": "health_enthusiast",
+                    "query_type": "in_scope",
+                    "difficulty_level": "medium"
                 }
-                for query in test_queries[:5]
             ],
             "evaluation_ready": True,
             "timestamp": datetime.now().isoformat()
@@ -479,12 +452,12 @@ def _get_category_description(category: Category) -> str:
     return descriptions.get(category, "")
 
 
-def _analyze_query_distribution(queries) -> Dict[str, int]:
-    """Analyze distribution of query types"""
-    distribution = {}
-    for query in queries:
-        query_type = query.query_type
-        if query_type not in distribution:
-            distribution[query_type] = 0
-        distribution[query_type] += 1
-    return distribution
+# def _analyze_query_distribution(queries) -> Dict[str, int]:
+#     """Analyze distribution of query types"""
+#     distribution = {}
+#     for query in queries:
+#         query_type = query.query_type
+#         if query_type not in distribution:
+#             distribution[query_type] = 0
+#         distribution[query_type] += 1
+#     return distribution

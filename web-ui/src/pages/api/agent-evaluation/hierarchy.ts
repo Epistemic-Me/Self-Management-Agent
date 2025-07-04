@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import type { AgentHierarchy, HierarchyNode } from '@/types/agent-evaluation';
 
-const HEALTH_COACH_API_KEY = process.env.HEALTH_COACH_API_KEY || 'test-key';
-const HEALTH_COACH_URL = process.env.HEALTH_COACH_URL || 'http://localhost:8060';
+const HEALTH_COACH_API_KEY = process.env.HEALTH_COACH_API_KEY || 'health_coach_api_key_12345';
+const HEALTH_COACH_URL = process.env.HEALTH_COACH_URL || 'http://localhost:8130';
 
 // Function to transform health coach hierarchy to agent evaluation format
 function transformToAgentHierarchy(healthCoachData: any): AgentHierarchy {
@@ -162,7 +162,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'GET') {
     try {
       // Fetch hierarchy from health coach service
-      const response = await fetch(`${HEALTH_COACH_URL}/evaluation/hierarchy`, {
+      const response = await fetch(`${HEALTH_COACH_URL}/evaluate/hierarchy`, {
         headers: {
           'Authorization': `Bearer ${HEALTH_COACH_API_KEY}`,
           'Content-Type': 'application/json'
