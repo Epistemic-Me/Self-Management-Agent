@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MessageCircle, BarChart3, Users, Rocket, FileText, Upload, Database, Target } from 'lucide-react';
+import { MessageCircle, BarChart3, Users, Rocket, FileText, Upload, Database, Target, Brain } from 'lucide-react';
 
 const navItems = [
   {
@@ -34,6 +34,11 @@ const navItems = [
     title: 'Agent Evaluation',
     href: '/agent-evaluation',
     icon: Target,
+  },
+  {
+    title: 'Personalization Contexts',
+    href: '/personalization-contexts',
+    icon: Brain,
   },
   {
     title: 'User Workbench',

@@ -157,13 +157,13 @@ async def get_evaluation_hierarchy(_: str = Depends(verify_api_key)):
     # Build the hierarchy structure for the UI
     hierarchy_nodes = []
     
-    # Root node
+    # Root node - directly contains cohorts
     hierarchy_nodes.append({
         "id": "health_coach_agent",
         "name": "Health Coach Agent",
         "type": "root",
         "description": "AI Health Coach with hierarchical constraint system",
-        "children": ["cohorts"],
+        "children": [cohort.value for cohort in Cohort],
         "metadata": {
             "total_sub_intents": len(CONSTRAINT_HIERARCHY["sub_intents"]),
             "total_cohorts": len(list(Cohort)),
@@ -172,25 +172,16 @@ async def get_evaluation_hierarchy(_: str = Depends(verify_api_key)):
         }
     })
     
-    # Cohorts level
-    hierarchy_nodes.append({
-        "id": "cohorts",
-        "name": "User Cohorts",
-        "type": "cohort_level",
-        "description": "User classification based on health/fitness level",
-        "children": [cohort.value for cohort in Cohort],
-        "metadata": {"level": 1}
-    })
-    
     # Individual cohorts
     for cohort in Cohort:
         cohort_data = CONSTRAINT_HIERARCHY["cohorts"][cohort]
+        # Cohort directly contains intents
         hierarchy_nodes.append({
             "id": cohort.value,
             "name": cohort.value.replace("_", " ").title(),
             "type": "cohort",
             "description": cohort_data["description"],
-            "children": [f"{cohort.value}_intents"],
+            "children": [f"{cohort.value}_{intent.value}" for intent in cohort_data["allowed_intents"]],
             "metadata": {
                 "level": 2,
                 "allowed_intents": [intent.value for intent in cohort_data["allowed_intents"]],
@@ -199,39 +190,20 @@ async def get_evaluation_hierarchy(_: str = Depends(verify_api_key)):
             }
         })
         
-        # Intent level for each cohort
-        hierarchy_nodes.append({
-            "id": f"{cohort.value}_intents",
-            "name": "Intent Classes",
-            "type": "intent_level",
-            "description": "Types of user interactions",
-            "children": [f"{cohort.value}_{intent.value}" for intent in cohort_data["allowed_intents"]],
-            "metadata": {"level": 3, "cohort": cohort.value}
-        })
-        
         # Individual intents for each cohort
         for intent in cohort_data["allowed_intents"]:
+            # Intent directly contains categories
             hierarchy_nodes.append({
                 "id": f"{cohort.value}_{intent.value}",
                 "name": intent.value.replace("_", " ").title(),
                 "type": "intent",
                 "description": _get_intent_description(intent),
-                "children": [f"{cohort.value}_{intent.value}_categories"],
+                "children": [f"{cohort.value}_{intent.value}_{cat.value}" for cat in Category],
                 "metadata": {
-                    "level": 4,
+                    "level": 3,
                     "cohort": cohort.value,
                     "intent": intent.value
                 }
-            })
-            
-            # Categories level
-            hierarchy_nodes.append({
-                "id": f"{cohort.value}_{intent.value}_categories",
-                "name": "Health Categories",
-                "type": "category_level",
-                "description": "Health domains (Sleep, Nutrition, Exercise)",
-                "children": [f"{cohort.value}_{intent.value}_{cat.value}" for cat in Category],
-                "metadata": {"level": 5, "cohort": cohort.value, "intent": intent.value}
             })
             
             # Individual categories
@@ -242,63 +214,54 @@ async def get_evaluation_hierarchy(_: str = Depends(verify_api_key)):
                     if sub_intent.parent_category == category and sub_intent.parent_intent == intent
                 ]
                 
+                # Category directly contains sub-intents
                 hierarchy_nodes.append({
                     "id": f"{cohort.value}_{intent.value}_{category.value}",
                     "name": category.value.title(),
                     "type": "category",
                     "description": _get_category_description(category),
-                    "children": [f"{cohort.value}_{intent.value}_{category.value}_sub_intents"] if matching_sub_intents else [],
+                    "children": [f"{cohort.value}_{intent.value}_{category.value}_{si}" for si in matching_sub_intents],
                     "metadata": {
-                        "level": 6,
+                        "level": 4,
                         "cohort": cohort.value,
                         "intent": intent.value,
                         "category": category.value,
                         "sub_intent_count": len(matching_sub_intents)
                     }
                 })
-                
-                # Sub-intents level
-                if matching_sub_intents:
-                    hierarchy_nodes.append({
-                        "id": f"{cohort.value}_{intent.value}_{category.value}_sub_intents",
-                        "name": "Sub-Intents",
-                        "type": "sub_intent_level",
-                        "description": "Specific implementation patterns",
-                        "children": [f"{cohort.value}_{intent.value}_{category.value}_{si}" for si in matching_sub_intents],
-                        "metadata": {"level": 7, "cohort": cohort.value, "intent": intent.value, "category": category.value}
-                    })
                     
-                    # Individual sub-intents
-                    for sub_intent_id in matching_sub_intents:
-                        sub_intent = CONSTRAINT_HIERARCHY["sub_intents"][sub_intent_id]
-                        hierarchy_nodes.append({
-                            "id": f"{cohort.value}_{intent.value}_{category.value}_{sub_intent_id}",
-                            "name": sub_intent.name,
-                            "type": "sub_intent",
-                            "description": sub_intent.description,
-                            "children": [],
-                            "metadata": {
-                                "level": 8,
-                                "cohort": cohort.value,
-                                "intent": intent.value,
-                                "category": category.value,
-                                "sub_intent_id": sub_intent_id,
-                                "constraint_count": len(sub_intent.constraints),
-                                "example_queries": sub_intent.example_queries[:2],  # Limit for UI
-                                "constraints": [{
-                                    "id": c.id,
-                                    "type": c.type.value,
-                                    "description": c.description,
-                                    "severity": c.severity
-                                } for c in sub_intent.constraints]
-                            }
-                        })
+                # Individual sub-intents
+                for sub_intent_id in matching_sub_intents:
+                    sub_intent = CONSTRAINT_HIERARCHY["sub_intents"][sub_intent_id]
+                    hierarchy_nodes.append({
+                        "id": f"{cohort.value}_{intent.value}_{category.value}_{sub_intent_id}",
+                        "name": sub_intent.name,
+                        "type": "sub_intent",
+                        "description": sub_intent.description,
+                        "children": [],
+                        "metadata": {
+                            "level": 5,
+                            "cohort": cohort.value,
+                            "intent": intent.value,
+                            "category": category.value,
+                            "sub_intent_id": sub_intent_id,
+                            "component_type": sub_intent.component_type.value,  # NEW: Add component type
+                            "constraint_count": len(sub_intent.constraints),
+                            "example_queries": sub_intent.example_queries[:2],  # Limit for UI
+                            "constraints": [{
+                                "id": c.id,
+                                "type": c.type.value,
+                                "description": c.description,
+                                "severity": c.severity
+                            } for c in sub_intent.constraints]
+                        }
+                    })
     
     return {
         "hierarchy": hierarchy_nodes,
         "stats": {
             "total_nodes": len(hierarchy_nodes),
-            "max_depth": 8,
+            "max_depth": 5,
             "cohort_count": len(list(Cohort)),
             "intent_count": len(list(IntentClass)),
             "category_count": len(list(Category)),

@@ -23,6 +23,7 @@ function transformToAgentHierarchy(healthCoachData: any): AgentHierarchy {
       type: node.type,
       icon: getIconForType(node.type),
       description: node.description,
+      component_type: node.metadata?.component_type, // NEW: Pass through component type
       metrics: {
         success: 0.85 + Math.random() * 0.15, // Mock success rate
         coverage: 0.80 + Math.random() * 0.15, // Mock coverage
@@ -122,13 +123,14 @@ function getIconForType(type: string): string {
     'category_level': '📂',
     'category': '📊',
     'sub_intent_level': '🔧',
-    'sub_intent': '⚙️'
+    'sub_intent': '🔧',
+    'subintent': '🔧'
   };
   return iconMap[type] || '📄';
 }
 
 function generateMockFailureModes(type: string) {
-  if (type === 'sub_intent') {
+  if (type === 'sub_intent' || type === 'subintent') {
     return [
       {
         id: 'fm1',
