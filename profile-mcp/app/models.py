@@ -327,3 +327,86 @@ class PromptTestSession(SQLModel, table=True):
     model_config = {
         "arbitrary_types_allowed": True
     }
+
+class PersonalizationContextCache(SQLModel, table=True):
+    """Table for caching computed personalization context packages."""
+    __tablename__ = "personalization_context_cache"
+    
+    id: uuid.UUID = Field(default_factory=uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", index=True)
+    context_type: str = Field(index=True)  # evidence_gathering, protocol_recommendation, etc.
+    context_data: Optional[Any] = Field(default=None, sa_column=Column(SAJSON))  # Computed context package
+    token_count: int = Field(default=0)
+    
+    # Cache metadata
+    data_sources: Optional[str] = None  # JSON list of data sources used
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: datetime  # When this cache entry expires
+    is_valid: bool = Field(default=True)
+    
+    # Relationships
+    user: Optional[User] = Relationship()
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
+class ContextRequirements(SQLModel, table=True):
+    """Table for storing dynamic context configuration rules."""
+    __tablename__ = "context_requirements"
+    
+    id: uuid.UUID = Field(default_factory=uuid4, primary_key=True)
+    context_type: str = Field(index=True)  # Type of context this applies to
+    data_source: str  # Data source (beliefs, measurements, biomarkers, etc.)
+    requirement_type: str  # required, helpful, optional
+    priority: int = Field(default=0)  # Priority order for inclusion (lower = higher priority)
+    token_weight: float = Field(default=1.0)  # How much to prioritize in token allocation
+    
+    # Configuration rules
+    max_items: Optional[int] = None  # Maximum items to include from this source
+    freshness_hours: Optional[int] = None  # How fresh data needs to be (in hours)
+    conditions: Optional[Any] = Field(default=None, sa_column=Column(SAJSON))  # Conditional rules
+    
+    # Metadata
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow, sa_column_kwargs={"onupdate": func.now()})
+    is_active: bool = Field(default=True)
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }
+
+class PersonalizationMetrics(SQLModel, table=True):
+    """Table for tracking personalization context performance metrics."""
+    __tablename__ = "personalization_metrics"
+    
+    id: uuid.UUID = Field(default_factory=uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", index=True)
+    context_type: str = Field(index=True)
+    session_id: Optional[str] = None  # Health coach session ID if available
+    
+    # Performance metrics
+    context_preparation_ms: int = Field(default=0)  # Time to prepare context
+    token_utilization: float = Field(default=0.0)  # Percentage of token budget used
+    data_sources_included: int = Field(default=0)  # Number of data sources included
+    cache_hit: bool = Field(default=False)  # Whether cache was used
+    
+    # Quality metrics
+    relevance_score: Optional[float] = None  # Computed relevance score (0-1)
+    user_satisfaction: Optional[float] = None  # User feedback score if available
+    effectiveness_score: Optional[float] = None  # Computed effectiveness metric
+    
+    # Context metadata
+    context_size_tokens: int = Field(default=0)
+    data_freshness_hours: Optional[float] = None  # Average age of data in hours
+    compression_ratio: Optional[float] = None  # How much data was compressed
+    
+    # Timestamps
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Relationships
+    user: Optional[User] = Relationship()
+
+    model_config = {
+        "arbitrary_types_allowed": True
+    }

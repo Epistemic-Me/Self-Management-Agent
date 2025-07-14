@@ -13,7 +13,7 @@ export interface DatasetFailureMode {
 }
 
 // Node types in the hierarchy
-export type NodeType = 'root' | 'cohort' | 'intent' | 'category' | 'subintent';
+export type NodeType = 'root' | 'cohort' | 'intent' | 'category' | 'subintent' | 'sub_intent';
 
 // Severity levels for failure modes and constraints
 export type SeverityLevel = 'low' | 'medium' | 'high';
@@ -47,6 +47,9 @@ export interface ConstraintFailureMode {
   traces?: string[]; // Trace IDs where this failure occurred
 }
 
+// Component type for sub-intents  
+export type ComponentType = 'retriever' | 'tool';
+
 // Agent hierarchy node
 export interface AgentNode {
   id: string;
@@ -58,6 +61,9 @@ export interface AgentNode {
   // Hierarchical relationships
   parent_id?: string;
   children?: AgentNode[];
+  
+  // Component information (for sub-intents)
+  component_type?: ComponentType; // NEW: What type of component this is
   
   // Evaluation data
   metrics?: EvaluationMetrics;
@@ -172,6 +178,12 @@ export const DEFAULT_TIER_INFO: Record<NodeType, TierInfo> = {
     example: 'Example: "Exercise" - Physical activity protocols and research'
   },
   subintent: {
+    icon: '🔧',
+    title: 'Sub-intent',
+    description: 'Granular, specific handlers with precise constraints. Each has its own prompt and evaluation logic.',
+    example: 'Example: "Meta-Analysis Review" - Synthesize multiple exercise studies'
+  },
+  sub_intent: {
     icon: '🔧',
     title: 'Sub-intent',
     description: 'Granular, specific handlers with precise constraints. Each has its own prompt and evaluation logic.',

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from app.core.config import settings
-from app.routers import chat, cohorts, intents, evaluation, health
+from app.routers import chat, cohorts, intents, evaluation, health, component_testing
 from app.services.database import init_db
 
 # Configure logging
@@ -49,6 +49,7 @@ app.include_router(chat.router, prefix="/chat", tags=["chat"])
 app.include_router(cohorts.router, prefix="/cohorts", tags=["cohorts"])
 app.include_router(intents.router, prefix="/intents", tags=["intents"])
 app.include_router(evaluation.router, prefix="/evaluate", tags=["evaluation"])
+app.include_router(component_testing.router, prefix="/component", tags=["component-testing"])
 app.include_router(health.router, prefix="/health", tags=["health"])
 
 

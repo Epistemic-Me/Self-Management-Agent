@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers import checklist, protocols, trend, chat, dialectic_db, simulation, user, dd_proxy, dd_data, project, trace, prompt, prompt_test, open_coding
 from fastapi_mcp import FastApiMCP
-from app.routers import selfmodel, belief, measurement, file
+from app.routers import selfmodel, belief, measurement, file, personalization
 from app.deps import lifespan, get_session
 from sqlmodel import select
 import uvicorn
@@ -74,6 +74,7 @@ app.include_router(trace.router, prefix="/api/traces")
 app.include_router(prompt.router)
 app.include_router(prompt_test.router)
 app.include_router(open_coding.router)
+app.include_router(personalization.router)
 
 mcp = FastApiMCP(app)
 mcp.mount()
