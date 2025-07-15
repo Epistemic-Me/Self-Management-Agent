@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -70,12 +70,7 @@ export default function ContextConfiguration({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Load default requirements based on context type
-  useEffect(() => {
-    loadDefaultRequirements();
-  }, [contextType]);
-
-  const loadDefaultRequirements = () => {
+  const loadDefaultRequirements = useCallback(() => {
     // Default requirements based on context type
     const defaults: Record<string, Partial<ContextRequirement>[]> = {
       evidence_gathering: [
@@ -125,7 +120,12 @@ export default function ContextConfiguration({
 
     setRequirements(mappedRequirements);
     setIsModified(false);
-  };
+  }, [contextType]);
+
+  // Load default requirements based on context type
+  useEffect(() => {
+    loadDefaultRequirements();
+  }, [contextType, loadDefaultRequirements]);
 
   const addRequirement = () => {
     const newRequirement: ContextRequirement = {
