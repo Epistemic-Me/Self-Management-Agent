@@ -11,6 +11,8 @@ rm -rf DD-MCP
 mv DD-MCP-old DD-MCP
 docker compose down
 docker compose up
+cd web-ui
+npm run build
 pm2 restart web-ui
 ```
 
