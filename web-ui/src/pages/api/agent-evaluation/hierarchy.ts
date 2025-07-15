@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import type { AgentHierarchy, HierarchyNode } from '@/types/agent-evaluation';
+import type { AgentHierarchy, AgentNode } from '@/types/agent-evaluation';
 
 const HEALTH_COACH_API_KEY = process.env.HEALTH_COACH_API_KEY || 'health_coach_api_key_12345';
 const HEALTH_COACH_URL = process.env.HEALTH_COACH_URL || 'http://localhost:8130';
@@ -13,7 +13,7 @@ function transformToAgentHierarchy(healthCoachData: any): AgentHierarchy {
   const rootHierarchyNode = hierarchy.find((node: any) => node.type === 'root');
   
   // Transform hierarchy nodes to evaluation format
-  const transformedNodes: { [key: string]: HierarchyNode } = {};
+  const transformedNodes: { [key: string]: AgentNode } = {};
   
   // Build a map of all nodes
   hierarchy.forEach((node: any) => {
@@ -88,6 +88,12 @@ function transformToAgentHierarchy(healthCoachData: any): AgentHierarchy {
         title: 'Sub-intent',
         description: 'Granular handlers with precise constraints',
         example: 'Example: "Meta-Analysis Review" - Synthesize multiple studies'
+      },
+      sub_intent: {
+        icon: '🔧',
+        title: 'Sub-intent',
+        description: 'Granular handlers with precise constraints',
+        example: 'Example: "Meta-Analysis Review" - Synthesize multiple studies'
       }
     },
     created_at: healthCoachData.metadata?.generated_at || new Date().toISOString(),
@@ -97,7 +103,7 @@ function transformToAgentHierarchy(healthCoachData: any): AgentHierarchy {
   return agentHierarchy;
 }
 
-function createFallbackRootNode(): HierarchyNode {
+function createFallbackRootNode(): AgentNode {
   return {
     id: 'root',
     name: 'AI Health Coach',
@@ -273,6 +279,12 @@ function createFallbackHierarchy(): AgentHierarchy {
         example: 'Example: "Exercise" - Physical activity protocols and research'
       },
       subintent: {
+        icon: '🔧',
+        title: 'Sub-intent',
+        description: 'Granular handlers with precise constraints',
+        example: 'Example: "Meta-Analysis Review" - Synthesize multiple studies'
+      },
+      sub_intent: {
         icon: '🔧',
         title: 'Sub-intent',
         description: 'Granular handlers with precise constraints',
