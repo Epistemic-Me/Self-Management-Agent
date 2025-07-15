@@ -239,6 +239,58 @@ Remember: You are focused on {routing_decision.category.value} and the
             
         return "\n".join(formatted)
     
+    async def _generate_response(
+        self,
+        query: str,
+        context: Dict[str, Any],
+        constraints: List,
+        user_id: str = "test_user"
+    ) -> str:
+        """Generate response with specific constraints (for component testing)"""
+        try:
+            # Build a simplified system prompt with just the constraints
+            constraint_text = self._format_constraints(constraints)
+            
+            system_prompt = f"""You are a health coach providing evidence-based advice.
+
+CONSTRAINTS YOU MUST FOLLOW:
+{constraint_text}
+
+Guidelines:
+- Follow all constraints strictly
+- Be specific and actionable
+- Use appropriate tone for the user
+- Stay within scope boundaries"""
+            
+            # Build user prompt with context
+            user_prompt = f"User Query: {query}"
+            
+            if context:
+                if "profile" in context:
+                    user_prompt += f"\nUser Profile: {context['profile']}"
+                if "beliefs" in context:
+                    beliefs_text = "\n".join([f"- {b}" for b in context["beliefs"][:3]])
+                    user_prompt += f"\nRelevant Beliefs:\n{beliefs_text}"
+                if "health_data" in context:
+                    user_prompt += f"\nHealth Data: {context['health_data']}"
+            
+            # Generate response
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.7,
+                max_tokens=600
+            )
+            
+            return response.choices[0].message.content
+            
+        except Exception as e:
+            logger.error(f"Response generation error: {str(e)}")
+            return f"I apologize, but I encountered an error generating a response. Error: {str(e)}"
+
     def _get_fallback_response(self, routing_decision: RoutingDecision) -> str:
         """Generate fallback response when main generation fails"""
         return (

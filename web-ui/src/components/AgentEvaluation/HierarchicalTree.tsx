@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronRight, Info, Plus, Trash2 } from 'lucide-react';
+import { ChevronRight, Info, Plus, Trash2, TestTube } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { ComponentTestingModal } from './ComponentTestingModal';
 import type { AgentNode, NodeType, TierInfo } from '@/types/agent-evaluation';
 
 interface HierarchicalTreeProps {
@@ -35,6 +36,7 @@ function TreeNode({
   tierInfo
 }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isTestModalOpen, setIsTestModalOpen] = useState(false);
   const hasChildren = node.children && node.children.length > 0;
   const isSelected = selectedNode?.id === node.id;
 
@@ -160,35 +162,65 @@ function TreeNode({
                     )}
                   </div>
                 )}
+                
+                {/* Component type badge for sub-intents */}
+                {(node.type === 'subintent' || node.type === 'sub_intent') && (
+                  <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
+                    node.component_type === 'tool' 
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                      : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                  }`}>
+                    {node.component_type === 'tool' ? '🔧 Tool' : node.component_type === 'retriever' ? '📥 Retriever' : '❓ Unknown'}
+                  </span>
+                )}
               </h3>
               
-              {/* Edit buttons */}
-              {isEditing && (
-                <div className="flex items-center gap-1">
+              {/* Action buttons */}
+              <div className="flex items-center gap-1">
+                {/* Test Component button for sub-intents */}
+                {(node.type === 'subintent' || node.type === 'sub_intent') && (
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-6 h-6 p-0 hover:bg-white/10"
+                    className="w-6 h-6 p-0 hover:bg-cyan-500/20 hover:text-cyan-400"
                     onClick={(e) => {
                       e.stopPropagation();
-                      // TODO: Add node functionality
+                      setIsTestModalOpen(true);
                     }}
+                    title="Test Component"
                   >
-                    <Plus className="h-3 w-3" />
+                    <TestTube className="h-3 w-3" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-6 h-6 p-0 hover:bg-red-500/20 hover:text-red-400"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // TODO: Delete node functionality
-                    }}
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
-                </div>
-              )}
+                )}
+                
+                {/* Edit buttons */}
+                {isEditing && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-6 h-6 p-0 hover:bg-white/10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // TODO: Add node functionality
+                      }}
+                    >
+                      <Plus className="h-3 w-3" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-6 h-6 p-0 hover:bg-red-500/20 hover:text-red-400"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // TODO: Delete node functionality
+                      }}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Node badge */}
@@ -264,6 +296,13 @@ function TreeNode({
           ))}
         </div>
       )}
+
+      {/* Component Testing Modal */}
+      <ComponentTestingModal
+        node={node}
+        isOpen={isTestModalOpen}
+        onClose={() => setIsTestModalOpen(false)}
+      />
     </div>
   );
 }
